@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="BbKBnW" name="Composer" displaySplashScreen="0" reportAppUsage="0"
-              splashScreenColour="Dark" projectType="guiapp" version="1.0.1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.2"
               bundleIdentifier="com.mosmods.composer" includeBinaryInAppConfig="0"
               jucerVersion="5.1.1" cppLanguageStandard="11" defines="JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1">
   <MAINGROUP id="UXK1n1" name="Composer">
