@@ -818,13 +818,7 @@ bool Playlist::inc_command() {
     bool     reset_counter = false;
     sint32   can_skip = c_cmdl->command_count;
 
-    if (is_valid_command(curr_cmd) && this->curr_section == LSND_SECTION_TYPE_END) {
-        // playback ending. to simplify things the command wont get incremented.
-        // this prevents accidentally calling select_command when the end sound
-        // is selected, and allows us to know which permutation was being played
-        // when the track started to end.
-        return false;
-    } else if (this->curr_section == LSND_SECTION_TYPE_ENDED) {
+    if (this->curr_section == LSND_SECTION_TYPE_ENDED) {
         return false;
     }
 
