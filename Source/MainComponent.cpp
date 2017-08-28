@@ -319,8 +319,9 @@ public:
                 if (this->acquire_playlist_write_lock()) return;
                 this->playlist->move_command_list(curr_cmdl_sel - 1, curr_cmdl_sel);
                 this->release_playlist_write_lock();
+                this->setActiveIndexes();
+                this->selectPlaylistTreeIndex(curr_cmdl_sel - 1, true);
                 this->reloadPlaylistTree(true);
-                this->selectPlaylistTreeIndex(curr_cmdl_sel - 1);
             }
             else if (!name.compareIgnoreCase(juce::String("shift track down button"))) {
                 // moving track down in the playlist
@@ -328,8 +329,9 @@ public:
                 if (this->acquire_playlist_write_lock()) return;
                 this->playlist->move_command_list(curr_cmdl_sel + 1, curr_cmdl_sel);
                 this->release_playlist_write_lock();
+                this->setActiveIndexes();
+                this->selectPlaylistTreeIndex(curr_cmdl_sel + 1, true);
                 this->reloadPlaylistTree(true);
-                this->selectPlaylistTreeIndex(curr_cmdl_sel + 1);
             }
             else if (!name.compareIgnoreCase(juce::String("loop playlist button"))) {
                 // track loop pressed
@@ -400,6 +402,7 @@ public:
                         if (this->acquire_playlist_write_lock()) return;
                         this->playlist->remove_command(curr_cmd_sel, curr_cmdl_sel);
                         this->release_playlist_write_lock();
+                        this->setActiveIndexes();
                         this->selectCommandsTreeIndex(max(curr_cmd_sel - 1, 0));
                         this->reloadCommandsButtons();
                         redraw_only = false;
@@ -410,7 +413,8 @@ public:
                         if (this->acquire_playlist_write_lock()) return;
                         this->playlist->move_command(curr_cmd_sel - 1, curr_cmd_sel);
                         this->release_playlist_write_lock();
-                        this->selectCommandsTreeIndex(curr_cmd_sel - 1);
+                        this->setActiveIndexes();
+                        this->selectCommandsTreeIndex(curr_cmd_sel - 1, true);
                     }
                     else if (!name.compareIgnoreCase(juce::String("shift command down button"))) {
                         // moving command down in the command list
@@ -418,7 +422,8 @@ public:
                         if (this->acquire_playlist_write_lock()) return;
                         this->playlist->move_command(curr_cmd_sel + 1, curr_cmd_sel);
                         this->release_playlist_write_lock();
-                        this->selectCommandsTreeIndex(curr_cmd_sel + 1);
+                        this->setActiveIndexes();
+                        this->selectCommandsTreeIndex(curr_cmd_sel + 1, true);
                     }
                 }
 
@@ -585,7 +590,7 @@ public:
         }
     }
 
-    void selectPlaylistTreeIndex(int index) {
+    void selectPlaylistTreeIndex(int index, bool force_reselect = false) {
         bool no_playlist = this->playlist == NULL;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
         if (no_playlist) return;
@@ -596,7 +601,7 @@ public:
 
         if (index >= root->getNumSubItems()) return;
 
-        if (this->getSelectedTrackIndex() != index) {
+        if (this->getSelectedTrackIndex() != index || force_reselect) {
             // clear the selections and select the specified index
             if (index >= 0) {
                 root->getSubItem(index)->setSelected(true, true);
@@ -620,7 +625,6 @@ public:
         TreeView      *tree = playlist_panel->playlistTree;
         TreeViewItem  *root = tree->getRootItem();
 
-        root->clearSubItems();
         if (no_playlist) return;
 
         CommandList *cmdls = this->playlist->command_lists;
@@ -642,6 +646,7 @@ public:
                 item->text = new_string;
             }
         } else {
+            root->clearSubItems();
             for (int i = 0; i < this->playlist->command_list_count; i++) {
                 if (!is_valid_command_list(&cmdls[i])) {
                     root->addSubItem(new TextTreeItem("<INVALID>"), i);
@@ -683,7 +688,7 @@ public:
         playlist_panel->playShuffledButton->setToggleState(this->playlist->shuffle, dontSendNotification);
     }
 
-    void selectCommandsTreeIndex(int index) {
+    void selectCommandsTreeIndex(int index, bool force_reselect = false) {
         int curr_cmdl_sel = this->getSelectedTrackIndex();
         int curr_cmd_sel  = this->getSelectedCommandIndex();
         if (curr_cmdl_sel < 0) return;
@@ -693,7 +698,7 @@ public:
 
         if (index >= root->getNumSubItems()) return;
 
-        if (curr_cmd_sel != index) {
+        if (curr_cmd_sel != index || force_reselect) {
             // clear the selections and select the specified index
             if (index >= 0) root->getSubItem(index)->setSelected(true, true);
         }

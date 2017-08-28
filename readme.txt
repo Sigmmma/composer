@@ -284,11 +284,14 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.2
+    Fixed a bug with shifting commands and tracks not redrawing the lists properly.
+
   * v1.0.1
     Fixed bug where the permutation 1 was skipped after the start sound ends.
 
   * v1.0.0
-    Initial release
+    Initial release.
 
 
 Todo:
