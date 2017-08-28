@@ -729,6 +729,8 @@ bool Playlist::inc_command() {
 
     // determine if the lsnd_tag has its sounds loaded
     bool load_failed = lsnd_tag->load_dependencies();
+    bool section_changed    = false;
+    bool used_loop_as_start = false;
 
     // increment the current section type if necessary
     switch (this->curr_section) {
@@ -747,17 +749,21 @@ bool Playlist::inc_command() {
         // skip this section if there isnt a start sound
         snd_tag = lsnd_tag->track_sounds[this->track].start;
         if (snd_tag != NULL) {
-            snd_tag->set_actual_perm_index(0);
+            section_changed = true;
             break;
         }
 
     case LSND_SECTION_TYPE_START:
         if (this->play_timer() >= this->fade_in_end()) {
+            snd_tag = this->get_snd_tag();
             this->curr_section = LSND_SECTION_TYPE_LOOP;
+
+            used_loop_as_start = snd_tag == this->get_snd_tag();
+
             // skip this section if there isnt a loop sound
             snd_tag = this->get_snd_tag();
             if (snd_tag != NULL) {
-                snd_tag->set_actual_perm_index(0);
+                section_changed = true;
                 break;
             }
         } else {
@@ -777,7 +783,7 @@ bool Playlist::inc_command() {
         if (snd_tag != NULL) {
             if (this->curr_section == LSND_SECTION_TYPE_END) {
                 // make sure a permutation is selected for the end sound
-                snd_tag->set_actual_perm_index(0);
+                section_changed = true;
 
                 // only break if the end is to be faded out or
                 // there is a specific end sound to play.
@@ -798,6 +804,12 @@ bool Playlist::inc_command() {
         // currently in an invalid section state
         this->curr_section = LSND_SECTION_TYPE_NONE;
         break;
+    }
+
+    if (section_changed && !used_loop_as_start && snd_tag != NULL) {
+        // section just changed, so make sure the next sound tag starts off at
+        // an invalid permutation so it is incremented to the first available.
+        snd_tag->set_actual_perm_index(-1);
     }
 
     Command *curr_cmd = this->get_command();
@@ -845,12 +857,12 @@ bool Playlist::inc_command() {
             if (!curr_cmd->skip && curr_cmd->endless_loop) {
                 // nothing needs to be done, looping forever
                 new_command = this->_curr_command;
-                this->loop_iteration++;
+                if (!section_changed) this->loop_iteration++;
                 break;
             } else if (!curr_cmd->skip && this->loop_iteration < curr_cmd->loop_count) {
                 // need to play this loop more times. increment the loop count
                 new_command = this->_curr_command;
-                this->loop_iteration++;
+                if (!section_changed) this->loop_iteration++;
                 break;
             } else {
                 // finished looping. reset loop counter
