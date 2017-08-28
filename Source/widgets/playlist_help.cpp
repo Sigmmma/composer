@@ -60,7 +60,9 @@ PlaylistHelp::PlaylistHelp ()
                                            "* Track playtime\n"
                                            "Number of seconds to play the currently selected track. If set to zero, the track will play forever. When a track is added to the playlist, this will default to 180 seconds(3 minutes). Max time is 1 hour(3600 seconds).\n"
                                            "\n"
-                                           "NOTE: To the left of the playtime slider is the number of seconds the currently PLAYING track has played.")));
+                                           "NOTE: To the left of the playtime slider is the number of seconds the currently PLAYING track has played.\n"
+                                           "\n"
+                                           "NOTE2: The playtime you specify is not a hard limit, but rather the minimum amount of time to play before trying to end the music. The current permutation MUST finish before entering the end phase. During the end phase, either an end sound will play or the permutations will continue to play with a fadeout applied to them.\n")));
     label2->setFont (Font (16.00f, Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (Justification::topLeft);
     label2->setEditable (false, false, false);
@@ -81,7 +83,7 @@ PlaylistHelp::PlaylistHelp ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (330, 800);
+    setSize (330, 1000);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -142,11 +144,11 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlaylistHelp" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="330" initialHeight="800">
+                 fixedSize="1" initialWidth="330" initialHeight="1000">
   <BACKGROUND backgroundColour="ff1c2e1c"/>
   <LABEL name="new label" id="9a5afc8996a91e8b" memberName="label2" virtualName=""
          explicitFocusOrder="0" pos="0% 23% 100% 76%" edTextCol="ff000000"
-         edBkgCol="0" labelText="* Add&#10;Adds a new track to the end of the playlist.&#10;&#10;&#10;* Remove&#10;Removes the currently selected track from the playlist.&#10;&#10;&#10;* Shift up&#10;Shifts the currently selected track up.&#10;&#10;&#10;* Shift down&#10;Shifts the currently selected track down.&#10;&#10;&#10;* Loop&#10;Loops back to the beginning when the last track is played.&#10;&#10;&#10;* Shuffle&#10;Plays the tracks in a randomized order. Clicking this will force &quot;Loop&quot; to be on as the playlist wont be read linearly.&#10;&#10;&#10;* Track playtime&#10;Number of seconds to play the currently selected track. If set to zero, the track will play forever. When a track is added to the playlist, this will default to 180 seconds(3 minutes). Max time is 1 hour(3600 seconds).&#10;&#10;NOTE: To the left of the playtime slider is the number of seconds the currently PLAYING track has played."
+         edBkgCol="0" labelText="* Add&#10;Adds a new track to the end of the playlist.&#10;&#10;&#10;* Remove&#10;Removes the currently selected track from the playlist.&#10;&#10;&#10;* Shift up&#10;Shifts the currently selected track up.&#10;&#10;&#10;* Shift down&#10;Shifts the currently selected track down.&#10;&#10;&#10;* Loop&#10;Loops back to the beginning when the last track is played.&#10;&#10;&#10;* Shuffle&#10;Plays the tracks in a randomized order. Clicking this will force &quot;Loop&quot; to be on as the playlist wont be read linearly.&#10;&#10;&#10;* Track playtime&#10;Number of seconds to play the currently selected track. If set to zero, the track will play forever. When a track is added to the playlist, this will default to 180 seconds(3 minutes). Max time is 1 hour(3600 seconds).&#10;&#10;NOTE: To the left of the playtime slider is the number of seconds the currently PLAYING track has played.&#10;&#10;NOTE2: The playtime you specify is not a hard limit, but rather the minimum amount of time to play before trying to end the music. The current permutation MUST finish before entering the end phase. During the end phase, either an end sound will play or the permutations will continue to play with a fadeout applied to them.&#10;"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="16" kerning="0" bold="0" italic="0"
          justification="9"/>

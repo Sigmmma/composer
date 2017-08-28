@@ -129,6 +129,12 @@ How to use Composer:
         NOTE: To the left of the playtime slider is the number of
         seconds the currently PLAYING track has played.
 
+        NOTE2: The playtime you specify is not a hard limit, but rather
+        the minimum amount of time to play before trying to end the music.
+        The current permutation MUST finish before entering the end phase.
+        During the end phase, either an end sound will play or the
+        permutations will continue to play with a fadeout applied to them.
+
 
   Commands:
     The Commands tab allows you to carefully tweak how the currently
@@ -241,6 +247,9 @@ License:
 
 Known bugs/issues:
 
+  * The timer going over the time you specify is NOT a bug. Read NOTE2 under
+    "Track playtime" in the "Playlist" section of "How to use Composer".
+
   * If a sound_looping file references a sound that doesnt exist(or
     cant be loaded), playback will end and Composer will proceed to
     play the next available track.
@@ -275,7 +284,10 @@ Troubleshooting:
 
 Changelog:
 
-  * v1.0.0.0
+  * v1.0.1
+    Fixed bug where the permutation 1 was skipped after the start sound ends.
+
+  * v1.0.0
     Initial release
 
 
