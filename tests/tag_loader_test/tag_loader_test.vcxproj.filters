@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="tag_loader_test.cpp" />
+    <ClCompile Include="..\Source\tags\common.cpp">
+      <Filter>tags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\tags\sound_looping.cpp">
+      <Filter>tags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\tags\tag_io.cpp">
+      <Filter>tags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\tags\sound.cpp">
+      <Filter>tags</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\Source\tags\common.h">
+      <Filter>tags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\tags\tag_io.h">
+      <Filter>tags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\tags\sound_looping.h">
+      <Filter>tags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\tags\sound.h">
+      <Filter>tags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\constants.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tags">
+      <UniqueIdentifier>{c9b17195-ebc7-48c7-9a2c-28e9550761c6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
