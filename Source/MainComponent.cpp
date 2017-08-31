@@ -628,7 +628,10 @@ public:
         if (no_playlist) return;
 
         CommandList *cmdls = this->playlist->command_lists;
-        if (cmdls == NULL) return;
+        if (cmdls == NULL) {
+            root->clearSubItems(); 
+            return;
+        }
 
         if (this->acquire_playlist_read_lock()) return;
         if (redraw_only) {
@@ -720,6 +723,7 @@ public:
 
         CommandList *cmdl = this->playlist->get_command_list(curr_cmdl_sel);
         if (!is_valid_command_list(cmdl)) {
+            root->clearSubItems();
             this->release_playlist_read_lock();
             return;
         }
