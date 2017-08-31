@@ -521,6 +521,9 @@ bool Playlist::insert_command_list(int list_index, LsndTag *lsnd_tag) {
     if (cmdl->commands == NULL) return true;
 
     if (lsnd_tag->get_filepath() != NULL) {
+        // make sure the lsnd_tag's filepath is long enough to be inside its tags_dir
+        if (strlen(lsnd_tag->get_filepath()) <= lsnd_tag->tags_dir_len) return true;
+
         // this is a REALLY bad way to get a filepath relative to the tags directory,
         // and I'm sure it will end up breaking eventually, but I'm not experienced
         // enough with making/using universal path functions in C++ yet to fix it.

@@ -284,6 +284,10 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.3
+    Fixed a bug with playlist not being blanked when making a new one
+    Fixed a bug with potentially reading random memory as a string
+
   * v1.0.2
     Fixed a bug with shifting commands and tracks not redrawing the lists properly.
 
