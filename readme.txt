@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.4
+    Fixed a bug where uncompressed 16-bit pcm sounds would not decode properly
+
   * v1.0.3
     Fixed a bug with playlist not being blanked when making a new one
     Fixed a bug with potentially reading random memory as a string
