@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.5
+    Fixed a bug with directly copying uncompressed samples to output buffer
+
   * v1.0.4
     Fixed a bug where uncompressed 16-bit pcm sounds would not decode properly
 
