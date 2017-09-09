@@ -284,6 +284,11 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.6
+    Fixed a few gui bugs
+    Fixed a few string related bugs
+    Enabled adding sound tags to the playlist(instead of only sound_looping tags)
+
   * v1.0.5
     Fixed a bug with directly copying uncompressed samples to output buffer
 

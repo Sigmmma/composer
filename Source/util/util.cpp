@@ -191,3 +191,86 @@ char *copy_dir_string(const char *dir_path) {
     new_alloc_path[new_alloc_len] = 0;
     return new_alloc_path;
 }
+
+inline bool caseinscmp(char x, char y) {
+    if (x > 0x40 && y > 0x40) {
+        if (x < 0x5B) x += 0x20;
+        if (y < 0x5B) y += 0x20;
+    }
+    return x == y;
+}
+
+SplitStr *splitdir(char *str, char *dir) {
+    if (str == NULL) return NULL;
+    SplitStr *str_struct = (SplitStr *)calloc(1, sizeof(SplitStr));
+    size_t dir_length = strlen(dir);
+    size_t str_length = strlen(str);
+    str_struct->left  = (char *)calloc(str_length, 1);
+    str_struct->right = (char *)calloc(str_length, 1);
+    if (str_struct == NULL || str_struct->left == NULL || str_struct->right == NULL) {
+        free(str_struct->left);
+        free(str_struct->right);
+        free(str_struct);
+        return NULL;
+    }
+
+    size_t i = 0;
+    for (;;) {
+        if (i >= dir_length) break;
+        if (i >= str_length) break;
+        if (!caseinscmp(dir[i], str[i])) break;
+        i++;
+    }
+
+    if (i > 0)          memcpy(str_struct->left,  str, i);
+    if (i < str_length) memcpy(str_struct->right, str + i, str_length - i);
+    str_struct->left  = (char *)realloc(str_struct->left, i + 1);
+    str_struct->right = (char *)realloc(str_struct->right, str_length - i + 1);
+
+    if (str_struct->left == NULL || str_struct->right == NULL) {
+        free(str_struct->left);
+        free(str_struct->right);
+        free(str_struct);
+        return NULL;
+    }
+
+    return str_struct;
+}
+
+SplitStr *splitext(char *str) {
+    if (str == NULL) return NULL;
+    SplitStr *str_struct = (SplitStr *)calloc(1, sizeof(SplitStr));
+    size_t str_length = strlen(str);
+    str_struct->left = (char *)calloc(str_length, 1);
+    str_struct->right = (char *)calloc(str_length, 1);
+    if (str_struct == NULL || str_struct->left == NULL || str_struct->right == NULL) {
+        free(str_struct->left);
+        free(str_struct->right);
+        free(str_struct);
+        return NULL;
+    }
+
+    size_t i = str_length;
+    for (;;) {
+        if (str[i] == '.') break;
+        if (i == 0 || str[i] == '/' || str[i] == '\\') {
+            i = str_length;
+            break;
+        }
+        i--;
+    }
+
+    if (i > 0)          memcpy(str_struct->left, str, i);
+    if (i < str_length) memcpy(str_struct->right, str + i, str_length - i);
+    str_struct->left  = (char *)realloc(str_struct->left, i + 1);
+    str_struct->right = (char *)realloc(str_struct->right, str_length - i + 1);
+
+    if (str_struct->left == NULL || str_struct->right == NULL) {
+        free(str_struct->left);
+        free(str_struct->right);
+        free(str_struct);
+        return NULL;
+    }
+
+    return str_struct;
+}

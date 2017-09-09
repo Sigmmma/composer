@@ -239,14 +239,16 @@ public:
             }
             else if (!name.compareIgnoreCase(juce::String("play button"))) {
                 // play/pause pressed. decide what to do.
+                bool select_track = false;
                 if (this->playlist->is_stopped()) {
+                    select_track = true;
                     this->startPlayback();
                 } else if (this->playlist->is_paused()) {
                     this->resumePlayback();
                 } else {
                     this->pausePlayback();
                 }
-                if (this->getSelectedTrackIndex() < 0) {
+                if (this->getSelectedTrackIndex() < 0 || select_track) {
                     this->selectPlaylistTreeIndex(this->playlist->curr_command_list());
                 }
             }
@@ -265,7 +267,7 @@ public:
                 juce::FileChooser *chooser = new juce::FileChooser(
                     juce::String("Select tracks to add to playlist."),
                     juce::File(this->playlist->get_tags_dir()),
-                    juce::String("*.sound_looping")
+                    juce::String("*.sound_looping;*.sound")
                 );
 
                 if (chooser->browseForMultipleFilesToOpen()) {
@@ -276,37 +278,43 @@ public:
                             this->playlist->get_tags_dir());
 
                         if (tag == NULL) continue;
+                        if (this->acquire_playlist_write_lock()) continue;
                         if (!tag->is_valid()) {
                             // tag wasn't valid
                             delete tag;
-                            continue;
-                        }
-                        else if (tag->tag_header->tag_class != TAG_CLASS_LSND) {
+                        } else if (tag->tag_header->tag_class == TAG_CLASS_SND) {
+                            // add the tag to the playlist
+                            this->playlist->add_command_list((SndTag *)tag);
+                            delete tag; // unload the sound since we dont need it now
+                        } else if (tag->tag_header->tag_class == TAG_CLASS_LSND) {
+                            // add the tag to the playlist
+                            this->playlist->add_command_list((LsndTag *)tag);
+                        } else {
                             // wrong kind of tag
                             delete tag;
-                            continue;
                         }
-
-                        // add the tag to the playlist
-                        if (this->acquire_playlist_write_lock()) return;
-                        this->playlist->add_command_list((LsndTag *)tag);
                         this->release_playlist_write_lock();
-
-                        this->reloadPlaylistTree();
                     }
+                    this->reloadPlaylistTree();
                 }
                 delete chooser;
             }
             else if (!name.compareIgnoreCase(juce::String("remove track button"))) {
                 // removing track from the playlist
+                bool set_playlist_sel = false;
                 if (this->playlist->curr_command_list() == curr_cmdl_sel) {
                     this->stopPlayback();
+                    set_playlist_sel = true;
                 }
                 if (this->acquire_playlist_write_lock()) return;
                 this->playlist->remove_command_list(curr_cmdl_sel);
                 this->release_playlist_write_lock();
                 this->selectPlaylistTreeIndex(-1);
                 this->reloadPlaylistTree();
+                if (curr_cmdl_sel >= this->playlist->command_list_count) {
+                    curr_cmdl_sel = this->playlist->command_list_count - 1;
+                }
+                if (set_playlist_sel) this->playlist->select_command_list(curr_cmdl_sel);
                 this->selectPlaylistTreeIndex(curr_cmdl_sel);
                 this->setActiveIndexes();
                 if (this->getSelectedTrackIndex() == -1 && !this->playlist->is_stopped()) {

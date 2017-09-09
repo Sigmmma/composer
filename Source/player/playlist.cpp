@@ -54,7 +54,6 @@ CommandList *new_command_list() {
     if (cmdl == NULL) return NULL;
 
     cmdl->sig = COMMAND_LIST_SIG;
-    cmdl->play_length   = 0;
     cmdl->command_count = 1;
     cmdl->commands      = new_command();
     cmdl->lsnd_path     = strcpycat("blank.sound_looping", "");
@@ -463,6 +462,9 @@ bool Playlist::add_command_list() {
 bool Playlist::add_command_list(LsndTag *lsnd_tag) {
     return this->insert_command_list(this->command_list_count, lsnd_tag);
 }
+bool Playlist::add_command_list(SndTag *snd_tag) {
+    return this->insert_command_list(this->command_list_count, snd_tag);
+}
 
 bool Playlist::insert_command_list(int list_index) {
     if (list_index < 0) return true;
@@ -508,6 +510,21 @@ bool Playlist::insert_command_list(int list_index) {
 
     return false;
 }
+bool Playlist::insert_command_list(int list_index, SndTag *snd_tag) {
+    LsndTag *lsnd_tag = make_lsnd_tag_for_snd_tag(snd_tag);
+    if (this->insert_command_list(list_index, lsnd_tag)) {
+        delete lsnd_tag;
+        return true;
+    }
+
+    CommandList *cmdl = this->get_command_list(list_index);
+    if (!is_valid_command_list(cmdl)) {
+        delete lsnd_tag;
+        return true;
+    }
+    cmdl->is_sound = true;
+    return false;
+}
 bool Playlist::insert_command_list(int list_index, LsndTag *lsnd_tag) {
     if (list_index < 0)                return true;
     if (lsnd_tag == NULL)         return true;
@@ -521,23 +538,19 @@ bool Playlist::insert_command_list(int list_index, LsndTag *lsnd_tag) {
     if (cmdl->commands == NULL) return true;
 
     if (lsnd_tag->get_filepath() != NULL) {
-        // make sure the lsnd_tag's filepath is long enough to be inside its tags_dir
-        if (strlen(lsnd_tag->get_filepath()) <= lsnd_tag->tags_dir_len) return true;
+        SplitStr *dir_split = splitdir(lsnd_tag->get_filepath(), lsnd_tag->get_tags_dir());
+        if (dir_split == NULL) return true;
 
-        // this is a REALLY bad way to get a filepath relative to the tags directory,
-        // and I'm sure it will end up breaking eventually, but I'm not experienced
-        // enough with making/using universal path functions in C++ yet to fix it.
-        cmdl->lsnd_path     = strcpycat(&lsnd_tag->get_filepath()[lsnd_tag->tags_dir_len], "");
+        SplitStr *ext_split = splitext(dir_split->right);
+        free(dir_split->left);
+        free(dir_split->right);
+        free(dir_split);
+        if (ext_split == NULL) return true;
+
+        cmdl->lsnd_path     = ext_split->left;
         cmdl->lsnd_path_len = strlen(cmdl->lsnd_path);
-        uint32 i;
-        for (i = cmdl->lsnd_path_len; i >= 0 && cmdl->lsnd_path[i] != '.'; i--) {
-            if (i == 0 || cmdl->lsnd_path[i] == '/' || cmdl->lsnd_path[i] == '\\') {
-                i = cmdl->lsnd_path_len;
-                break;
-            }
-        }
-        cmdl->lsnd_path_len = i;
-        cmdl->lsnd_path[i]  = 0;
+        free(ext_split->right);
+        free(ext_split);
     }
     // blank the commands(1 created by default) so we can make them manually
     free(cmdl->commands);
@@ -719,7 +732,7 @@ bool Playlist::inc_command() {
     sint32 new_command  = this->_curr_command;
     CommandList *c_cmdl = this->get_command_list();
     LsndTag *lsnd_tag   = this->get_lsnd_tag();
-    SndTag  *snd_tag;
+    SndTag  *snd_tag = NULL;
 
     if (lsnd_tag == NULL)      return true;
     if (!lsnd_tag->is_valid()) return true;
@@ -1137,6 +1150,7 @@ void Playlist::parse(char *input_path) {
 
     // load each command_lists lsnd path and commands
     bool bad_load = false;
+    SndTag *snd_tag;
     for (sint32 i = 0; i < head->command_list_count; i++) {
         cmdl = &head->command_lists[i];
         if (cmdl->sig != COMMAND_LIST_SIG || bad_load) {
@@ -1159,9 +1173,19 @@ void Playlist::parse(char *input_path) {
         fread(cmdl->lsnd_path, cmdl->lsnd_path_len + 1, 1, in_file);
         fread(cmdl->commands, COMMAND_SIZE, cmdl->command_count, in_file);
 
-        cmdl->lsnd_tag = (LsndTag *)load_tag_at_path(
-            strcpycat(head->tags_dir,
-                strcpycat(cmdl->lsnd_path, ".sound_looping"), 0, 1), head->tags_dir);
+        cmdl->lsnd_tag = NULL;
+        if (!cmdl->is_sound) {
+            cmdl->lsnd_tag = (LsndTag *)load_tag_at_path(
+                strcpycat(head->tags_dir,
+                    strcpycat(cmdl->lsnd_path, ".sound_looping"), 0, 1), head->tags_dir);
+        } else {
+            snd_tag = (SndTag *)load_tag_at_path(
+                strcpycat(head->tags_dir,
+                    strcpycat(cmdl->lsnd_path, ".sound"), 0, 1), head->tags_dir);
+            if (snd_tag == NULL) continue;
+            cmdl->lsnd_tag = make_lsnd_tag_for_snd_tag(snd_tag);
+            if (cmdl->lsnd_tag == NULL) delete snd_tag;
+        }
     }
 
     fclose(in_file);

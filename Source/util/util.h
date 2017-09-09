@@ -31,11 +31,18 @@ const int PATHSTR_SIZE = sizeof(char);
 const PATHSTR_TYPE PATH_DELIMS = "\\/";
 #endif // !UNICODE
 
+typedef struct SplitStr {
+    char *left;
+    char *right;
+} SplitStr;
+
 inline int gcd(int x, int y);
 double time_now();
 char *strcpycat(char *left, char *right);
 char *strcpycat(char *left, char *right, bool l_free, bool r_free);
-bool file_exists(const char *name);
+bool  file_exists(const char *name);
 char *dirname(const char *path);
 char *get_working_dir();
 char *copy_dir_string(const char *dir_path);
+SplitStr *splitdir(char *str, char *dir);
+SplitStr *splitext(char *str);

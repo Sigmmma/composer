@@ -70,8 +70,11 @@ typedef struct CommandList {
                                  // before switching to the next lsnd_tag.
                                  // this takes precedence over looping forever.
                                  // 0 == no play time limit
+    // flags
+    uint32        is_sound : 1;  // lsnd_path actually points to a SndTag, and
+                                 // a fake LsndTag must be made to handle it.
 
-    pad    slack_space[COMMAND_LIST_SIZE - 4 * 7];
+    pad    slack_space[COMMAND_LIST_SIZE - 4 * 8];
 } CommandList; DUMB_STATIC_ASSERT(sizeof(CommandList) == COMMAND_LIST_SIZE);
 
 typedef struct PlaylistHeader {
@@ -172,8 +175,10 @@ public:
     bool          inc_command_list();
     bool          select_command_list(int);
     bool          add_command_list();
+    bool          add_command_list(SndTag *);
     bool          add_command_list(LsndTag *);
     bool          insert_command_list(int);
+    bool          insert_command_list(int, SndTag *);
     bool          insert_command_list(int, LsndTag *);
     bool          remove_command_list();
     bool          remove_command_list(int);
