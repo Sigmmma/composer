@@ -12,4 +12,6 @@ playlist_test/Debug/*
 ogg_test/ogg_test/Debug/*
 *.pdb
 *.idb
-tags\*
+tags/cmt
+tags/levels
+tags/sound
