@@ -25,6 +25,8 @@ other constants, such as the max size a tag can be before it wont be loaded.
 #pragma pack(push, 1)
 #pragma once
 #include <cstdint>
+#include <stdio.h>
+#include <sys/types.h>
 
 typedef uint8_t  uint8;
 typedef uint16_t uint16;
@@ -68,4 +70,4 @@ enum EngineId : uint32 {
     ENGINE_ID_HALO_2 = FOURCC('!', 'm', 'l', 'b'),
 };
 
-#pragma pack(pop)  
+#pragma pack(pop)

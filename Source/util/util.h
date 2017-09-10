@@ -18,18 +18,24 @@
 */
 
 #pragma once
-#include <windows.h>
-#include <sys/stat.h>
+#include "constants.h"
+#include <string.h>
 
 #ifdef UNICODE
-#define PATHSTR_TYPE LPWSTR
-const int PATHSTR_SIZE = sizeof(wchar_t);
-const PATHSTR_TYPE PATH_DELIMS = L"\\/";
+    #define PATHSTR_TYPE wchar_t
+    const int PATHSTR_SIZE = sizeof(wchar_t);
+    const PATHSTR_TYPE PATH_DELIMS[] = L"\\/";
 #else
-#define PATHSTR_TYPE LPSTR
-const int PATHSTR_SIZE = sizeof(char);
-const PATHSTR_TYPE PATH_DELIMS = "\\/";
+    #define PATHSTR_TYPE char
+    const int PATHSTR_SIZE = sizeof(char);
+    const PATHSTR_TYPE PATH_DELIMS[] = "\\/";
 #endif // !UNICODE
+
+#if defined(__linux__) || defined(UNIX)
+    #include <time.h>
+#elif defined(_WIN32)
+    #include <windows.h>
+#endif
 
 typedef struct SplitStr {
     char *left;

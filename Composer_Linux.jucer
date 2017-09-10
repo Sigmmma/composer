@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="BbKBnW" name="Composer" displaySplashScreen="0" reportAppUsage="0"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.6"
+              bundleIdentifier="com.mosmods.composer" includeBinaryInAppConfig="0"
+              jucerVersion="5.1.1" cppLanguageStandard="11" defines="JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1">
+  <MAINGROUP id="UXK1n1" name="Composer">
+    <GROUP id="{BC2EE367-4E89-332E-2341-FE809B5CFF86}" name="Source">
+      <FILE id="We8YMl" name="config.cpp" compile="1" resource="0" file="Source/config.cpp"/>
+      <FILE id="rXwy0v" name="config.h" compile="0" resource="0" file="Source/config.h"/>
+      <GROUP id="{8F4701FF-BA1C-F8D3-F6F3-1EE450C62BBD}" name="player">
+        <FILE id="Citt4n" name="playlist.cpp" compile="1" resource="0" file="Source/player/playlist.cpp"/>
+        <FILE id="tYC2JI" name="playlist.h" compile="0" resource="0" file="Source/player/playlist.h"/>
+      </GROUP>
+      <GROUP id="{7BCD7FF0-3E1B-AF77-D280-09A1CCA8CB3D}" name="util">
+        <FILE id="VeGep4" name="constants.h" compile="0" resource="0" file="Source/util/constants.h"/>
+        <FILE id="T06G76" name="util.cpp" compile="1" resource="0" file="Source/util/util.cpp"/>
+        <FILE id="rhETnD" name="util.h" compile="0" resource="0" file="Source/util/util.h"/>
+      </GROUP>
+      <GROUP id="{AB6F5CEA-6410-7C1C-ED53-E00EDCC393BB}" name="rsrc">
+        <FILE id="Qy6huH" name="composer_16x16.ico" compile="0" resource="1"
+              file="Source/rsrc/composer_16x16.ico"/>
+        <FILE id="PXTliW" name="composer_16x16.png" compile="0" resource="1"
+              file="Source/rsrc/composer_16x16.png"/>
+        <FILE id="k03pKP" name="composer_128x128.ico" compile="0" resource="1"
+              file="Source/rsrc/composer_128x128.ico"/>
+        <FILE id="t7F1k2" name="composer_128x128.PNG" compile="0" resource="1"
+              file="Source/rsrc/composer_128x128.PNG"/>
+      </GROUP>
+      <GROUP id="{C68ADA5E-0D87-458D-C631-B24BA84F6DEC}" name="widgets">
+        <FILE id="az2yVs" name="commands_help.cpp" compile="1" resource="0"
+              file="Source/widgets/commands_help.cpp"/>
+        <FILE id="QFOKOI" name="commands_help.h" compile="0" resource="0" file="Source/widgets/commands_help.h"/>
+        <FILE id="JX1U8f" name="commands_help_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/commands_help_panel.cpp"/>
+        <FILE id="tC13dH" name="commands_help_panel.h" compile="0" resource="0"
+              file="Source/widgets/commands_help_panel.h"/>
+        <FILE id="SjJX4U" name="playlist_help.cpp" compile="1" resource="0"
+              file="Source/widgets/playlist_help.cpp"/>
+        <FILE id="gzPcF4" name="playlist_help.h" compile="0" resource="0" file="Source/widgets/playlist_help.h"/>
+        <FILE id="BOimrd" name="playlist_help_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/playlist_help_panel.cpp"/>
+        <FILE id="OGa4nY" name="playlist_help_panel.h" compile="0" resource="0"
+              file="Source/widgets/playlist_help_panel.h"/>
+        <FILE id="PdFPhg" name="help_panel.cpp" compile="1" resource="0" file="Source/widgets/help_panel.cpp"/>
+        <FILE id="OhW0PO" name="help_panel.h" compile="0" resource="0" file="Source/widgets/help_panel.h"/>
+        <FILE id="e3hYzy" name="text_tree_item.cpp" compile="1" resource="0"
+              file="Source/widgets/text_tree_item.cpp"/>
+        <FILE id="bTBcka" name="about_panel.cpp" compile="1" resource="0" file="Source/widgets/about_panel.cpp"/>
+        <FILE id="lTqySb" name="about_panel.h" compile="0" resource="0" file="Source/widgets/about_panel.h"/>
+        <FILE id="YGGuEs" name="controls.cpp" compile="1" resource="0" file="Source/widgets/controls.cpp"/>
+        <FILE id="ndK7v3" name="controls.h" compile="0" resource="0" file="Source/widgets/controls.h"/>
+        <FILE id="IQEHca" name="commands_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/commands_panel.cpp"/>
+        <FILE id="uevCa1" name="commands_panel.h" compile="0" resource="0"
+              file="Source/widgets/commands_panel.h"/>
+        <FILE id="iRN39Y" name="playback_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/playback_panel.cpp"/>
+        <FILE id="WSpjxH" name="playback_panel.h" compile="0" resource="0"
+              file="Source/widgets/playback_panel.h"/>
+        <FILE id="OQrgQZ" name="playlist_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/playlist_panel.cpp"/>
+        <FILE id="EUPSYA" name="playlist_panel.h" compile="0" resource="0"
+              file="Source/widgets/playlist_panel.h"/>
+        <FILE id="Skv3Gy" name="settings_panel.cpp" compile="1" resource="0"
+              file="Source/widgets/settings_panel.cpp"/>
+        <FILE id="PyA9GT" name="settings_panel.h" compile="0" resource="0"
+              file="Source/widgets/settings_panel.h"/>
+      </GROUP>
+      <GROUP id="{CC62D4A5-022B-F038-5F19-2B4F9704ABF3}" name="xbadpcm">
+        <FILE id="s4mfpF" name="xbadpcm.cpp" compile="1" resource="0" file="Source/xbadpcm/xbadpcm.cpp"/>
+        <FILE id="JxJzLE" name="xbadpcm.h" compile="0" resource="0" file="Source/xbadpcm/xbadpcm.h"/>
+      </GROUP>
+      <GROUP id="{B57B060D-DF49-3EDC-138E-BDFD4A147942}" name="tags">
+        <FILE id="X0XLe1" name="common.cpp" compile="1" resource="0" file="Source/tags/common.cpp"/>
+        <FILE id="PVixrG" name="common.h" compile="0" resource="0" file="Source/tags/common.h"/>
+        <FILE id="n4W9s7" name="sound.cpp" compile="1" resource="0" file="Source/tags/sound.cpp"/>
+        <FILE id="D0C2Tc" name="sound.h" compile="0" resource="0" file="Source/tags/sound.h"/>
+        <FILE id="i0RdR7" name="sound_looping.cpp" compile="1" resource="0"
+              file="Source/tags/sound_looping.cpp"/>
+        <FILE id="E7jvdw" name="sound_looping.h" compile="0" resource="0" file="Source/tags/sound_looping.h"/>
+        <FILE id="QmhhrA" name="tag_io.cpp" compile="1" resource="0" file="Source/tags/tag_io.cpp"/>
+        <FILE id="WrmQd4" name="tag_io.h" compile="0" resource="0" file="Source/tags/tag_io.h"/>
+      </GROUP>
+      <FILE id="WkzGus" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="J5zIlK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="8.1"
+            smallIcon="PXTliW" bigIcon="t7F1k2">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
+                       isDebug="1" optimisation="1" targetName="Composer"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
+                       isDebug="0" optimisation="3" targetName="Composer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+    <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
+                   androidExternalReadNeeded="1" androidExternalWriteNeeded="1"
+                   androidScreenOrientation="portrait" androidMinimumSDK="25" buildToolsVersion="25.0.3"
+                   smallIcon="PXTliW" bigIcon="t7F1k2">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" androidArchitectures="armeabi x86" isDebug="1" optimisation="1"
+                       targetName="Composer"/>
+        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
+                       isDebug="0" optimisation="3" targetName="Composer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_events" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_core" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="/usr/share/juce/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="PXTliW" bigIcon="t7F1k2">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Composer"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Composer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_USE_FLAC="disabled" JUCE_USE_OGGVORBIS="enabled" JUCE_USE_MP3AUDIOFORMAT="disabled"
+               JUCE_USE_LAME_AUDIO_FORMAT="disabled" JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled"/>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
