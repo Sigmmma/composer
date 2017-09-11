@@ -130,8 +130,13 @@ void ComposerConfig::new_config() {
     if (working_dir == NULL) return;
 
     this->set_filepath(strcpycat(working_dir, (char *)DEF_CONFIG_NAME));
+    #if defined(__linux__) || defined(UNIX)
+    this->set_tags_dir(strcpycat(working_dir, "tags/"));
+    this->set_playlists_dir(strcpycat(working_dir, "playlists/"));
+    #elif defined(_WIN32)
     this->set_tags_dir(strcpycat(working_dir, "tags\\"));
     this->set_playlists_dir(strcpycat(working_dir, "playlists\\"));
+    #endif
     free(working_dir);
 
 }

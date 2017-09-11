@@ -15,3 +15,5 @@ ogg_test/ogg_test/Debug/*
 tags/cmt
 tags/levels
 tags/sound
+Builds/*
+*.lnx

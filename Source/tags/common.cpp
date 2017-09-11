@@ -18,6 +18,7 @@
 */
 
 #include "common.h"
+#include "../util/util.h"
 #include <iostream>
 
 using std::cout;
@@ -27,6 +28,8 @@ char *parse_dependency(Dependency *dependency, char *curr_pos) {
         dependency->path_pointer = NULL;
     } else {
         dependency->path_pointer = (pointer32)curr_pos;
+        // convert backslashes into forward slashes for linux
+        sanitize_path(curr_pos, true);
         curr_pos += dependency->path_length + 1;
     }
     return curr_pos;
@@ -111,14 +114,14 @@ char *make_indent_str(int indent) {
 void print_tag_header(TagHeader &header, int indent) {
     char *indent0 = make_indent_str(indent);
     char *indent1 = make_indent_str(indent + 1);
-    cout << indent0 << "{ tag_header, ptr == " << (&header) << '\n';
-    cout << indent1 << "tag_class   == " << (header.tag_class) << '\n';
+    cout << indent0 << "{ tag_header, ptr == " << &header << '\n';
+    cout << indent1 << "tag_class   == " << (uint32)header.tag_class << '\n';
     //cout << indent1 << "checksum    == " << (header.checksum) << '\n';
     //cout << indent1 << "header_size == " << (header.header_size) << '\n';
     cout << indent1 << "version     == " << (header.version) << '\n';
     //cout << indent1 << "integ0      == " << ((uint32)header.integ0) << '\n';
     //cout << indent1 << "integ1      == " << ((uint32)header.integ1) << '\n';
-    cout << indent1 << "engine_id   == " << (header.engine_id) << '\n';
+    cout << indent1 << "engine_id   == " << (uint32)header.engine_id << '\n';
     cout << indent0 << "}\n";
 }
 void print_rawdata_ref(RawdataRef &rawdata_ref, char *name, int indent) {

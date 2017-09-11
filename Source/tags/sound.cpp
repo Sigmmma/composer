@@ -32,7 +32,7 @@ SndTag::SndTag() : HaloTag() {
     this->curr_perm        = -1;
 }
 
-SndTag::SndTag(char *data, long data_size, const char *new_filepath, const char *new_tags_dir) : 
+SndTag::SndTag(char *data, long data_size, const char *new_filepath, const char *new_tags_dir) :
                HaloTag(data, data_size, new_filepath, new_tags_dir) {
     this->curr_pitch_range = -1;
     this->max_pitch_range  = -1;
@@ -42,7 +42,6 @@ SndTag::SndTag(char *data, long data_size, const char *new_filepath, const char 
 }
 
 SndTag::~SndTag() {
-    HaloTag::~HaloTag();
 }
 
 sint16 SndTag::max_actual_perm() {
@@ -128,31 +127,31 @@ void SndTag::print() {
     SndBody *body = (SndBody *)this->tag_data;
 
     cout << "{ tag_body, ptr == " << (&body) << '\n';
-    cout << indent1 << "class            == " << (body->sound_class) << '\n';
+    cout << indent1 << "class            == " << (uint16)(body->sound_class) << '\n';
     cout << indent1 << "sample_rate      == ";
     switch (body->sample_rate) {
-    case SAMPLE_RATE_22KHZ: cout << "22khz"; break;
-    case SAMPLE_RATE_44KHZ: cout << "44khz"; break;
-    case SAMPLE_RATE_32KHZ: cout << "32khz"; break;
-    default:                cout << body->sample_rate; break;
+    case SampleRate::KHz22: cout << "22khz"; break;
+    case SampleRate::KHz44: cout << "44khz"; break;
+    case SampleRate::KHz32: cout << "32khz"; break;
+    default:                cout << (uint16)(body->sample_rate); break;
     }
     cout << '\n';
 
     cout << indent1 << "encoding         == ";
     switch (body->encoding) {
-    case ENCODING_MONO:   cout << "mono";   break;
-    case ENCODING_STEREO: cout << "stereo"; break;
-    default:              cout << body->encoding; break;
+    case Encoding::mono:   cout << "mono";   break;
+    case Encoding::stereo: cout << "stereo"; break;
+    default:               cout << (uint16)(body->encoding); break;
     }
     cout << '\n';
 
     cout << indent1 << "compression      == ";
     switch (body->compression) {
-    case COMPRESSION_PCM_LE: cout << "none"; break;
-    case COMPRESSION_XBOX:   cout << "xbox_adpcm"; break;
-    case COMPRESSION_IMA:    cout << "ima_adpcm"; break;
-    case COMPRESSION_OGG:    cout << "ogg"; break;
-    default:                 cout << body->compression; break;
+    case Compression::pcm_be: cout << "pcm be int16"; break;
+    case Compression::xbox:   cout << "xbox_adpcm"; break;
+    case Compression::ima:    cout << "ima_adpcm"; break;
+    case Compression::ogg:    cout << "ogg"; break;
+    default:                  cout << (uint16)body->compression; break;
     }
     cout << '\n';
 
@@ -184,7 +183,7 @@ void SndTag::print() {
                     cout << indent3 << "name            == \"" << (perm->name) << "\"\n";
                     cout << indent3 << "skip_fraction   == " << (perm->skip_fraction) << '\n';
                     cout << indent3 << "gain            == " << (perm->gain) << '\n';
-                    cout << indent3 << "compression     == " << (perm->compression) << '\n';
+                    cout << indent3 << "compression     == " << (uint16)(perm->compression) << '\n';
                     cout << indent3 << "next_perm_index == " << (perm->next_permutation_index) << '\n';
                     print_rawdata_ref(perm->samples, "samples", 3);
                     //print_rawdata_ref(perm->mouth_data, "mouth_data", 3);
@@ -310,7 +309,7 @@ SoundSamples *SndTag::get_curr_samples() {
         this->curr_pitch_range = -1;
         this->curr_actual_perm = this->curr_perm = -1;
         return NULL;
-    } 
+    }
 
     // check if no permutations, or if we hit the end of the chain
     if (this->curr_actual_perm == -1 || this->curr_perm == -1) return NULL;
@@ -324,13 +323,13 @@ SoundSamples *SndTag::get_curr_samples() {
     uint16 rate = 1;
 
     switch(body->sample_rate) {
-    case(SAMPLE_RATE_22KHZ): rate = 22050; break;
-    case(SAMPLE_RATE_44KHZ): rate = 44010; break;
-    case(SAMPLE_RATE_32KHZ): rate = 32000; break;
+    case(SampleRate::KHz22): rate = 22050; break;
+    case(SampleRate::KHz44): rate = 44010; break;
+    case(SampleRate::KHz32): rate = 32000; break;
     }
 
     SoundSamples *samples = new SoundSamples(
-        &perm[this->curr_perm], (uint8)(body->encoding + 1),
+        &perm[this->curr_perm], (uint8)(body->encoding) + 1,
         this->curr_perm, this->curr_actual_perm,
         bytes_per_sample, rate);
 
@@ -385,9 +384,9 @@ SoundSamples::SoundSamples() {
     this->skip_fraction     = 1.0;
     this->gain              = 1.0;
     this->channel_count     = 1;
-    this->encoded_format    = COMPRESSION_UNKNOWN;
-    this->decoded_format    = COMPRESSION_UNKNOWN;
-    this->sect_type         = LSND_SECTION_TYPE_START;
+    this->encoded_format    = Compression::unknown;
+    this->decoded_format    = Compression::unknown;
+    this->sect_type         = LsndSectionType::start;
     this->this_perm_index   = 0;
     this->next_perm_index   = -1;
     this->sample_rate       = 0;
@@ -414,7 +413,7 @@ SoundSamples::SoundSamples(SndPermutation *snd_perm, uint8 channel_count,
     this->skip_fraction   = snd_perm->skip_fraction;
     this->gain            = snd_perm->gain;
     this->encoded_format  = snd_perm->compression;
-    this->sect_type       = LSND_SECTION_TYPE_START;
+    this->sect_type       = LsndSectionType::start;
     this->next_perm_index = snd_perm->next_permutation_index;
 
     this->actual_perm_index = actual_perm_index;
@@ -453,14 +452,14 @@ void SoundSamples::setup_juce_decoder() {
 
     if (this->juce_decoder != NULL) return;
     switch(this->encoded_format) {
-    case COMPRESSION_OGG:
+    case Compression::ogg:
         format_getter = new juce::OggVorbisAudioFormat();
         this->juce_decoder = format_getter->createReaderFor(
             new juce::MemoryInputStream(this->sample_data, this->sample_data_size, false), false);
 
         delete format_getter;
         break;
-    case COMPRESSION_WMA:
+    case Compression::wma:
         break;
     }
 }
@@ -497,9 +496,9 @@ bool SoundSamples::setup_decode_buffer(uint32 req_samp_ct) {
 }
 
 bool SoundSamples::is_compressed() {
-    return !(this->encoded_format == COMPRESSION_PCM_LE ||
-             this->encoded_format == COMPRESSION_PCM_BE ||
-             this->encoded_format == COMPRESSION_PCM_F);
+    return !(this->encoded_format == Compression::pcm_le ||
+             this->encoded_format == Compression::pcm_be ||
+             this->encoded_format == Compression::pcm_f);
 }
 
 bool SoundSamples::direct_buffer_copy(uint32 req_samp_ct) {
@@ -532,7 +531,7 @@ bool SoundSamples::decode_to_pcm_int16(uint32 req_samp_ct) {
     if (req_samp_ct == 0) req_samp_ct = this->sample_count();
     req_samp_ct += this->decoded_sample_adjust;
 
-    if (this->encoded_format == COMPRESSION_PCM_LE) {
+    if (this->encoded_format == Compression::pcm_le) {
         this->bytes_per_sample = sizeof(sint16);
         if (direct_buffer_copy(req_samp_ct)) return true;
         this->decoded_sample_adjust = 0;
@@ -550,14 +549,14 @@ bool SoundSamples::decode_to_pcm_int16(uint32 req_samp_ct) {
     uint32 bytes_to_decode;
 
     switch (this->encoded_format) {
-    case COMPRESSION_PCM_LE:
-    case COMPRESSION_PCM_BE:
+    case Compression::pcm_le:
+    case Compression::pcm_be:
         this->bytes_per_sample = sizeof(sint16);
         if (direct_buffer_copy(req_samp_ct)) return true;
 
         this->decoded_sample_adjust = 0;
 
-        if (this->encoded_format != COMPRESSION_PCM_BE) return false;
+        if (this->encoded_format != Compression::pcm_be) return false;
 
         // halo 2
         // byteswap from big endian to little endian.
@@ -570,17 +569,17 @@ bool SoundSamples::decode_to_pcm_int16(uint32 req_samp_ct) {
             samp[0] = samp[1];
             samp[1] = temp;
         }
-        this->decoded_format = COMPRESSION_PCM_LE;
+        this->decoded_format = Compression::pcm_le;
         break;
-    case COMPRESSION_XBOX:
-    case COMPRESSION_IMA:
+    case Compression::xbox:
+    case Compression::ima:
         // do adpcm decompression
         if (this->decoded_buffer_owner) {
             this->decoded_buffer_owner = false;
             free(this->decode_buffer);
         }
         this->bytes_per_sample = sizeof(sint16);
-        this->decoded_format = COMPRESSION_PCM_LE;
+        this->decoded_format = Compression::pcm_le;
 
         // figure out how many bytes of the decoded pcm samples we are skipping
         pcm_adjust_size = this->decoded_sample_adjust * this->bytes_per_sample * this->channel_count;
@@ -618,7 +617,7 @@ bool SoundSamples::decode_to_pcm_int16(uint32 req_samp_ct) {
 
         // discard the extra samples we werent asked for, but had to decode anyway
         this->decoded_sample_data_size -= (
-            (SAMPLES_PER_XBOX_ADPCM_BLOCK - samp_ct_in_last_block) 
+            (SAMPLES_PER_XBOX_ADPCM_BLOCK - samp_ct_in_last_block)
              %  SAMPLES_PER_XBOX_ADPCM_BLOCK) * (this->bytes_per_sample * this->channel_count);
 
         // skip the decoding position past the blocks we FULLY decoded
@@ -631,7 +630,7 @@ bool SoundSamples::decode_to_pcm_int16(uint32 req_samp_ct) {
 
         delete pcm_struct;
         break;
-    case COMPRESSION_WMA:
+    case Compression::wma:
         // halo 2
         // TODO: FINISH THIS
         //break;
@@ -655,14 +654,14 @@ bool SoundSamples::decode_to_pcm_float32(uint32 req_samp_ct) {
     float **sample_ptrs;
 
     switch (this->encoded_format) {
-    case COMPRESSION_PCM_F:
+    case Compression::pcm_f:
         if (direct_buffer_copy(req_samp_ct + this->decoded_sample_adjust)) return true;
         this->decoded_sample_adjust = 0;
 
         return false;
-    case COMPRESSION_OGG:
+    case Compression::ogg:
         this->bytes_per_sample = sizeof(float);
-        this->decoded_format = COMPRESSION_PCM_F;
+        this->decoded_format = Compression::pcm_f;
         if (this->juce_decoder == NULL) return true;
         if (this->setup_decode_buffer(req_samp_ct)) return true;
 
@@ -674,7 +673,7 @@ bool SoundSamples::decode_to_pcm_float32(uint32 req_samp_ct) {
 
         if (this->channel_count == 1) {
             // dont to interleave one channel. just decode it
-            this->juce_decoder->read((int* const*)(&this->decode_buffer), 1, 
+            this->juce_decoder->read((int* const*)(&this->decode_buffer), 1,
                                      this->total_samples_decoded, req_samp_ct, true);
             this->total_samples_decoded += req_samp_ct;
             return false;
@@ -686,7 +685,7 @@ bool SoundSamples::decode_to_pcm_float32(uint32 req_samp_ct) {
             sample_ptrs[c] = (float *)malloc(sizeof(float) * req_samp_ct);
         }
 
-        this->juce_decoder->read((int* const*)sample_ptrs, this->channel_count, 
+        this->juce_decoder->read((int* const*)sample_ptrs, this->channel_count,
                                  this->total_samples_decoded, req_samp_ct, true);
         this->total_samples_decoded += req_samp_ct;
 
@@ -704,11 +703,11 @@ bool SoundSamples::decode_to_pcm_float32(uint32 req_samp_ct) {
         }
         free(sample_ptrs);
         return false;
-    case COMPRESSION_IMA:
-    case COMPRESSION_XBOX:
-    case COMPRESSION_PCM_BE:
-    case COMPRESSION_PCM_LE:
-    case COMPRESSION_WMA:
+    case Compression::ima:
+    case Compression::xbox:
+    case Compression::pcm_be:
+    case Compression::pcm_le:
+    case Compression::wma:
         // make sure all these are decoded to pcm_16 first
         if (!this->decode_to_pcm_int16(req_samp_ct)) break;
     default:
@@ -726,7 +725,7 @@ bool SoundSamples::decode_to_pcm_float32(uint32 req_samp_ct) {
     this->decode_buffer  = NULL;
 
     this->bytes_per_sample = sizeof(float);
-    this->decoded_format = COMPRESSION_PCM_F;
+    this->decoded_format = Compression::pcm_f;
     if (this->setup_decode_buffer(req_samp_ct)) return true;
 
     floats = (float *)this->decode_buffer;
@@ -754,14 +753,14 @@ double SoundSamples::sample_length() {
     // returns sample length of all encoded samples in milliseconds
 
     switch (this->encoded_format) {
-    case COMPRESSION_IMA:
-    case COMPRESSION_XBOX:
-    case COMPRESSION_PCM_F:
-    case COMPRESSION_PCM_BE:
-    case COMPRESSION_PCM_LE:
+    case Compression::ima:
+    case Compression::xbox:
+    case Compression::pcm_f:
+    case Compression::pcm_be:
+    case Compression::pcm_le:
         return ((double)this->sample_count() * 1000) / this->sample_rate;
-    case COMPRESSION_OGG:
-    case COMPRESSION_WMA:
+    case Compression::ogg:
+    case Compression::wma:
     default:
         return -1.0;
     }
@@ -778,16 +777,16 @@ uint32 SoundSamples::sample_count() {
     uint32 ct = this->sample_data_size;
 
     switch (this->encoded_format) {
-    case COMPRESSION_IMA:
-    case COMPRESSION_XBOX:
+    case Compression::ima:
+    case Compression::xbox:
         // ima and xbox adpcm are a 4:1 compression scheme
         ct *= 4;
-    case COMPRESSION_PCM_F:
-    case COMPRESSION_PCM_BE:
-    case COMPRESSION_PCM_LE:
+    case Compression::pcm_f:
+    case Compression::pcm_be:
+    case Compression::pcm_le:
         return ct / (this->bytes_per_sample * this->channel_count);
-    case COMPRESSION_OGG:
-    case COMPRESSION_WMA:
+    case Compression::ogg:
+    case Compression::wma:
     default:
         return 0;
     }
@@ -795,9 +794,9 @@ uint32 SoundSamples::sample_count() {
 
 uint32 SoundSamples::decoded_sample_count() {
     switch (this->decoded_format) {
-    case COMPRESSION_PCM_F:
-    case COMPRESSION_PCM_BE:
-    case COMPRESSION_PCM_LE:
+    case Compression::pcm_f:
+    case Compression::pcm_be:
+    case Compression::pcm_le:
         return this->decoded_sample_data_size / (this->bytes_per_sample * this->channel_count);
     default:
         return 0;

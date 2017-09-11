@@ -27,6 +27,8 @@ serializing itself to a file and loading settings from a file.
 #include <iostream>
 
 using std::cout;
+using std::max;
+using std::min;
 
 bool is_valid_command(Command *cmd) {
     if (cmd == NULL)             return false;
@@ -72,7 +74,7 @@ Playlist::Playlist() {
     this->tags_dir_len  = 0;
     this->filepath_len  = 0;
     this->command_list_count = 0;
-    this->curr_section = LSND_SECTION_TYPE_NONE;
+    this->curr_section = LsndSectionType::none;
 
     this->new_playlist();
 }
@@ -169,7 +171,7 @@ int Playlist::curr_command() {
 sint16 Playlist::curr_perm() {
     SndTag *snd_tag = this->get_snd_tag();
     if (snd_tag == NULL) return true;
-    if (snd_tag->curr_actual_perm < 0 || 
+    if (snd_tag->curr_actual_perm < 0 ||
         snd_tag->curr_actual_perm > snd_tag->max_actual_perm()) {
         // invalid current permutation
         snd_tag->curr_actual_perm = -1;
@@ -211,7 +213,7 @@ bool Playlist::is_paused() {
 }
 
 bool Playlist::is_stopped() {
-    return this->curr_section == LSND_SECTION_TYPE_NONE;
+    return this->curr_section == LsndSectionType::none;
 }
 
 void Playlist::play() {
@@ -231,7 +233,7 @@ void Playlist::play() {
         }
         // reset to the beginning of the commands so we can start playing
         this->select_command(-1);
-        this->curr_section = LSND_SECTION_TYPE_STARTING;
+        this->curr_section = LsndSectionType::starting;
     }
 }
 
@@ -247,7 +249,7 @@ void Playlist::stop() {
     }
 
     // setting to no command selected, which should stop all playback.
-    this->curr_section   = LSND_SECTION_TYPE_NONE;
+    this->curr_section   = LsndSectionType::none;
     this->loop_iteration = 0;
     this->_curr_command  = -1;
     this->alt            = false;
@@ -295,15 +297,15 @@ double Playlist::fade_out_end() {
 }
 
 bool Playlist::fade_in() {
-    if (this->curr_section != LSND_SECTION_TYPE_START &&
-        this->curr_section != LSND_SECTION_TYPE_STARTING) return false;
+    if (this->curr_section != LsndSectionType::starting &&
+        this->curr_section != LsndSectionType::start) return false;
     LsndTag *lsnd_tag = this->get_lsnd_tag();
     if (lsnd_tag == NULL) return false;
     return lsnd_tag->track_sounds[this->track].flags.fade_in_at_start;
 }
 bool Playlist::fade_out() {
-    if (this->curr_section != LSND_SECTION_TYPE_END && 
-        this->curr_section != LSND_SECTION_TYPE_ENDED) return false;
+    if (this->curr_section != LsndSectionType::ended &&
+        this->curr_section != LsndSectionType::end) return false;
     LsndTag *lsnd_tag = this->get_lsnd_tag();
     if (lsnd_tag == NULL) return false;
     return lsnd_tag->track_sounds[this->track].flags.fade_out_at_stop;
@@ -314,7 +316,7 @@ SoundSamples *Playlist::get_next_samples() {
     if (this->is_paused())  return NULL;
     if (this->is_stopped()) return NULL;
 
-    if (this->curr_section == LSND_SECTION_TYPE_STARTING) {
+    if (this->curr_section == LsndSectionType::starting) {
         this->inc_command();
     }
 
@@ -355,14 +357,14 @@ SndTag *Playlist::get_snd_tag(LsndSectionType section, bool use_alt) {
     // the order and lack of breaks is correct. if there is no dedicated
     // start or end sound, we default to using the loop sound
     switch (section) {
-    case LSND_SECTION_TYPE_STARTING:
-    case LSND_SECTION_TYPE_START:
+    case LsndSectionType::starting:
+    case LsndSectionType::start:
         if (l_track.start != NULL)                return l_track.start;
-    case LSND_SECTION_TYPE_LOOP:
+    case LsndSectionType::loop:
         if (use_alt  && l_track.alt_loop != NULL) return l_track.alt_loop;
         if (!use_alt && l_track.loop     != NULL) return l_track.loop;
         break;
-    case LSND_SECTION_TYPE_END:
+    case LsndSectionType::end:
         if (use_alt  && l_track.alt_end  != NULL) return l_track.alt_end;
         if (!use_alt && l_track.end      != NULL) return l_track.end;
         if (use_alt  && l_track.alt_loop != NULL) return l_track.alt_loop;
@@ -677,8 +679,8 @@ bool Playlist::move_command_list(int target, int src) {
 
     // shift the structs between the src and target up or down
     if (src < target) {
-        memmove(plists + src,        
-                plists + src + 1, 
+        memmove(plists + src,
+                plists + src + 1,
                 chunk_size);
     } else {
         memmove(plists + target + 1,
@@ -750,7 +752,7 @@ bool Playlist::inc_command() {
 
     // increment the current section type if necessary
     switch (this->curr_section) {
-    case LSND_SECTION_TYPE_STARTING:
+    case LsndSectionType::starting:
         // make sure sounds are loaded and their permutation states are reset
         if (load_failed || lsnd_tag->reset_sound_states()) {
             // couldnt load/reset sounds.
@@ -760,7 +762,7 @@ bool Playlist::inc_command() {
         }
 
         new_command = -1;
-        this->curr_section = LSND_SECTION_TYPE_START;
+        this->curr_section = LsndSectionType::start;
 
         // skip this section if there isnt a start sound
         snd_tag = lsnd_tag->track_sounds[this->track].start;
@@ -769,10 +771,10 @@ bool Playlist::inc_command() {
             break;
         }
 
-    case LSND_SECTION_TYPE_START:
+    case LsndSectionType::start:
         if (this->play_timer() >= this->fade_in_end()) {
             snd_tag = this->get_snd_tag();
-            this->curr_section = LSND_SECTION_TYPE_LOOP;
+            this->curr_section = LsndSectionType::loop;
 
             used_loop_as_start = snd_tag == this->get_snd_tag();
 
@@ -786,18 +788,18 @@ bool Playlist::inc_command() {
             break;
         }
 
-    case LSND_SECTION_TYPE_LOOP:
+    case LsndSectionType::loop:
         if (c_cmdl->play_length > 0.0 &&
             this->play_timer() > 0.5 &&
             this->play_timer() >= (double)c_cmdl->play_length) {
             // play time up. start ending this sound_looping tag's playback
-            this->curr_section = LSND_SECTION_TYPE_END;
+            this->curr_section = LsndSectionType::end;
             this->fade_out_timer(0.0);
         }
         // skip this section if there isnt an end sound
         snd_tag = this->get_snd_tag();
         if (snd_tag != NULL) {
-            if (this->curr_section == LSND_SECTION_TYPE_END) {
+            if (this->curr_section == LsndSectionType::end) {
                 // make sure a permutation is selected for the end sound
                 section_changed = true;
 
@@ -811,14 +813,14 @@ bool Playlist::inc_command() {
             }
         }
 
-    case LSND_SECTION_TYPE_END:
-    case LSND_SECTION_TYPE_ENDED:
-        this->curr_section = LSND_SECTION_TYPE_ENDED;
+    case LsndSectionType::end:
+    case LsndSectionType::ended:
+        this->curr_section = LsndSectionType::ended;
         break;
 
     default:
         // currently in an invalid section state
-        this->curr_section = LSND_SECTION_TYPE_NONE;
+        this->curr_section = LsndSectionType::none;
         break;
     }
 
@@ -834,14 +836,14 @@ bool Playlist::inc_command() {
     bool     reset_counter = false;
     sint32   can_skip = c_cmdl->command_count;
 
-    if (this->curr_section == LSND_SECTION_TYPE_ENDED) {
+    if (this->curr_section == LsndSectionType::ended) {
         return false;
     }
 
     // decide which command to increment to
     do {
-        if (this->curr_section == LSND_SECTION_TYPE_NONE ||
-            this->curr_section == LSND_SECTION_TYPE_ENDED) {
+        if (this->curr_section == LsndSectionType::none ||
+            this->curr_section == LsndSectionType::ended) {
             // not playing anything. set new_command to -1 to stop playing.
             new_command = -1;
             break;
@@ -907,9 +909,9 @@ bool Playlist::select_command(int index) {
     bool curr_alt = this->alt;
 
     switch (this->curr_section) {
-    case LSND_SECTION_TYPE_LOOP:
+    case LsndSectionType::loop:
         this->alt = c_cmd->alt;
-    case LSND_SECTION_TYPE_END:
+    case LsndSectionType::end:
         break;  // leave it unchanged from what it last was
     default:
         this->alt = false;
@@ -1064,8 +1066,8 @@ bool Playlist::move_command(int target, int src, int list_index) {
                 cmdl->commands + src + 1,
                 chunk_size);
     } else {
-        memmove(cmdl->commands + target + 1, 
-                cmdl->commands + target, 
+        memmove(cmdl->commands + target + 1,
+                cmdl->commands + target,
                 chunk_size);
     }
     // copy the source command_list to its target location
@@ -1293,7 +1295,11 @@ size_t Playlist::serialize() {
 void Playlist::new_playlist() {
     this->erase_playlist();
     this->filepath = strcpycat(get_working_dir(), "new_playlist.play", 1, 0);
+    #if defined(__linux__) || defined(UNIX)
+    this->tags_dir = strcpycat(get_working_dir(), "tags/", 1, 0);
+    #elif defined(_WIN32)
     this->tags_dir = strcpycat(get_working_dir(), "tags\\", 1, 0);
+    #endif
     this->filepath_len = strlen(this->filepath);
     this->tags_dir_len = strlen(this->tags_dir);
 
