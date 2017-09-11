@@ -29,17 +29,20 @@ typedef struct LsndFlags {
     uint32 deafening_to_ai : 1;
     uint32 not_a_loop      : 1;
     uint32 stops_music     : 1;
+    uint32 padding         : 32-3;
 } LsndFlags; DUMB_STATIC_ASSERT(sizeof(LsndFlags) == 4);
 
 typedef struct LsndTrackFlags {
     uint32 fade_in_at_start  : 1;
     uint32 fade_out_at_stop  : 1;
     uint32 fade_in_alternate : 1;
+    uint32 padding           : 32-3;
 } TrackFlags; DUMB_STATIC_ASSERT(sizeof(TrackFlags) == 4);
 
 typedef struct LsndDetailSoundFlags {
     uint32 dont_play_with_alternate    : 1;
     uint32 dont_play_without_alternate : 1;
+    uint32 padding                     : 32-2;
 } DetailSoundFlags; DUMB_STATIC_ASSERT(sizeof(DetailSoundFlags) == 4);
 
 

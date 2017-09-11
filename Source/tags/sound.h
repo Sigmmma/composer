@@ -34,9 +34,10 @@ const uint32 DEF_DECODE_BUFFER_SIZE = 1024;
 typedef struct SndFlags {
     uint32 fit_to_adpcm_blocksize             : 1;
     uint32 split_long_sound_into_permutations : 1;
+    uint32 padding                            : 32-2;
 } SndFlags; DUMB_STATIC_ASSERT(sizeof(SndFlags) == 4);
 
-enum SoundClasses : sint16 {
+enum class SoundClasses : sint16 {
     projectile_impact     = 0,
     projectile_detonation = 1,
 
@@ -76,57 +77,62 @@ enum SoundClasses : sint16 {
     scripted_dialog_other  = 46,
     scripted_dialog_force_unspatialized = 47,
 
-    game_event = 50
+    game_event = 50,
+    FORCE_16BIT = 0x7FFF
 };
 
-enum SampleRate : sint16 {
-    SAMPLE_RATE_22KHZ,
-    SAMPLE_RATE_44KHZ,
-    SAMPLE_RATE_32KHZ  // halo 2 only
+enum class SampleRate : sint16 {
+    KHz22,
+    KHz44,
+    KHz32,  // halo 2 only
+    FORCE_16BIT = 0x7FFF
 };
 
-enum Encoding : sint16 {
-    ENCODING_MONO,
-    ENCODING_STEREO
+enum class Encoding : sint16 {
+    mono,
+    stereo,
+    FORCE_16BIT = 0x7FFF
 };
 
-enum Compression : sint16 {
-    COMPRESSION_PCM_BE,  // 16-bit int
-    COMPRESSION_XBOX,
-    COMPRESSION_IMA,
-    COMPRESSION_OGG,  // for halo 2 this is PCM little endian
-    COMPRESSION_WMA,
-    COMPRESSION_PCM_LE,  // 16-bit int
-    COMPRESSION_PCM_F,   // 32-bit float
-    COMPRESSION_UNKNOWN = 0x7fff
+enum class Compression : sint16 {
+    pcm_be,  // 16-bit int
+    xbox,
+    ima,
+    ogg,  // for halo 2 this is PCM little endian
+    wma,
+    pcm_le,  // 16-bit int
+    pcm_f,   // 32-bit float
+    unknown = 0x7FFF
 };
 // these compression enums are actually wrong. Since halo 1 and halo 2 have some
 // incompatible compression types, the above will be used to unify both enums.
 // tags will have their compression changed when they are loaded.
 
-enum H1Compression : sint16 {
-    H1_COMPRESSION_PCM,  // 16-bit int big endian(in tag form)
-    H1_COMPRESSION_XBOX,
-    H1_COMPRESSION_IMA,
-    H1_COMPRESSION_OGG,
+enum class H1Compression : sint16 {
+    pcm,  // 16-bit int big endian(in tag form)
+    xbox,
+    ima,
+    ogg,
+    FORCE_16BIT = 0x7FFF
 };
 
-enum H2Compression : sint16 {
-    H2_COMPRESSION_PCM_BE,
-    H2_COMPRESSION_XBOX,
-    H2_COMPRESSION_IMA,
-    H2_COMPRESSION_PCM_LE,
-    H2_COMPRESSION_WMA
+enum class H2Compression : sint16 {
+    pcm_be,
+    xbox,
+    ima,
+    pcm_le,
+    wma,
+    FORCE_16BIT = 0x7FFF
 };
 
-enum LsndSectionType : sint16 {
-    LSND_SECTION_TYPE_NONE,      // not playing anything and not expected to be/have been.
-    LSND_SECTION_TYPE_STARTING,  // starting playback, but nothing played yet.
-    LSND_SECTION_TYPE_START,     // playback has started, but not entered the loops yet.
-    LSND_SECTION_TYPE_LOOP,      // loops playing and will continue to until end is triggered.
-    LSND_SECTION_TYPE_END,       // playing end sound.
-    LSND_SECTION_TYPE_ENDED,     // end sound finished playing. nothing should be playing.
-                                 // this state means its safe to switch to a new track.
+enum class LsndSectionType : sint16 {
+    none,      // not playing anything and not expected to be/have been.
+    starting,  // starting playback, but nothing played yet.
+    start,     // playback has started, but not entered the loops yet.
+    loop,      // loops playing and will continue to until end is triggered.
+    end,       // playing end sound.
+    ended,     // end sound finished playing. nothing should be playing.
+               // this state means its safe to switch to a new track.
 };
 
 typedef struct SndPermutation {
@@ -221,13 +227,13 @@ public:
     float           skip_fraction;
     float           gain;
     uint8           channel_count;
-    pad             padding;
+    pad             padding1;
     Compression     encoded_format;
     Compression     decoded_format;
     LsndSectionType sect_type;  // used to know what kinda of section of a
                                 // sound_looping tag these samples belong to.
     uint8       bytes_per_sample;  // number of bytes per decoded sample
-    pad         pad;
+    pad         padding2;
 
     sint16      actual_perm_index;  // the index into the permutations reflexive
                                     // where this chain of permutations starts.

@@ -23,7 +23,7 @@
 
 class HaloTag {
 public:
-    HaloTag::HaloTag();
+    HaloTag();
     HaloTag(char *data, long data_size, const char *new_filepath, const char *new_tags_dir);
     ~HaloTag();
 
