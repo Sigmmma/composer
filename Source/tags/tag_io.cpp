@@ -150,18 +150,18 @@ HaloTag *load_tag_at_path(const char *path, const char *tags_dir) {
     TagHeader *tag_header = (TagHeader *)tag_buffer;
     byteswap_tag_header(*tag_header);
 
-    if (tag_header->engine_id != ENGINE_ID_HALO_1) {
+    if (tag_header->engine_id != EngineId::halo_1) {
         // incorrect version for the engine. free the buffer we just made
         cout << "Engine ID does not match: \n";
-        cout << tag_header->engine_id << " != " << ENGINE_ID_HALO_1 << '\n';
+        cout << (uint32)(tag_header->engine_id) << " != " << (uint32)(EngineId::halo_1) << '\n';
         free(tag_buffer);
         return NULL;
     }
 
     HaloTag *halo_tag;
-    if (tag_header->tag_class == TAG_CLASS_SND) {
+    if (tag_header->tag_class == TagClass::snd) {
         halo_tag = new SndTag(tag_buffer, length, path, tags_dir);
-    } else if (tag_header->tag_class == TAG_CLASS_LSND) {
+    } else if (tag_header->tag_class == TagClass::lsnd) {
         halo_tag = new LsndTag(tag_buffer, length, path, tags_dir);
     } else {
         halo_tag = new HaloTag(tag_buffer, length, path, tags_dir);

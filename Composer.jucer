@@ -117,28 +117,69 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi x86" isDebug="1" optimisation="1"
                        targetName="Composer"/>
-        <CONFIGURATION name="Release" androidArchitectures="" isDebug="0" optimisation="3"
-                       targetName="Composer"/>
+        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
+                       isDebug="0" optimisation="3" targetName="Composer"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_events" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_core" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="/usr/share/juce/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="PXTliW" bigIcon="t7F1k2">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Composer"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Composer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_events" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_core" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/usr/share/juce/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="/usr/share/juce/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux" externalLibraries="" smallIcon="PXTliW"
+                      bigIcon="t7F1k2">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" linuxCodeBlocksArchitecture="-m32" isDebug="1" optimisation="1"
+                       targetName="Composer"/>
+        <CONFIGURATION name="Release" linuxCodeBlocksArchitecture="-m32" isDebug="0"
+                       optimisation="3" targetName="Composer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path=""/>
+        <MODULEPATH id="juce_gui_basics" path=""/>
+        <MODULEPATH id="juce_graphics" path=""/>
+        <MODULEPATH id="juce_events" path=""/>
+        <MODULEPATH id="juce_data_structures" path=""/>
+        <MODULEPATH id="juce_core" path=""/>
+        <MODULEPATH id="juce_audio_utils" path=""/>
+        <MODULEPATH id="juce_audio_processors" path=""/>
+        <MODULEPATH id="juce_audio_formats" path=""/>
+        <MODULEPATH id="juce_audio_devices" path=""/>
+        <MODULEPATH id="juce_audio_basics" path=""/>
+      </MODULEPATHS>
+    </CODEBLOCKS_LINUX>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
@@ -149,7 +190,8 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_USE_FLAC="disabled" JUCE_USE_OGGVORBIS="enabled" JUCE_USE_MP3AUDIOFORMAT="disabled"
-               JUCE_USE_LAME_AUDIO_FORMAT="disabled" JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled"/>
+               JUCE_USE_LAME_AUDIO_FORMAT="disabled" JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled"
+               JUCE_WEB_BROWSER="disabled" JUCE_ENABLE_LIVE_CONSTANT_EDITOR="disabled"/>
   <LIVE_SETTINGS>
     <WINDOWS/>
   </LIVE_SETTINGS>

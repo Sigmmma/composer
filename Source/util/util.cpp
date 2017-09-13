@@ -19,34 +19,45 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <sys/stat.h>
 #include "util.h"
 
-#ifdef __linux__ 
-#include <time.h>
-double time_now() {
-    // returns a timestamp in milliseconds
-    struct timespec result;
-    clock_gettime(CLOCK_REALTIME, &result);
-    return ((double)1000.0) * result.tv_sec +
-            (double)result.tv_nsec / ((double)1000000.0);
-}
-#elif _WIN32
-#include <windows.h>
-double time_now() {
-    // returns a timestamp in milliseconds
-    FILETIME   ftime;
-    SYSTEMTIME stime;
-    double result;
+#if defined(__linux__) || defined(UNIX)
+    #include <time.h>
+    #include <unistd.h>
+    double time_now() {
+        // returns a timestamp in milliseconds
+        struct timespec result;
+        clock_gettime(CLOCK_REALTIME, &result);
+        return (result.tv_sec  * 1000.0 +
+                result.tv_nsec / 1000000.0);
+    }
 
-    // get the current time and convert it to a filetime
-    GetSystemTime(&stime);
-    SystemTimeToFileTime(&stime, &ftime);
+    // emulate sleep from windows
+    void Sleep(uint32 dwMilliseconds) {
+        struct timespec sleep_time;
+        sleep_time.tv_sec  =  dwMilliseconds / 1000;
+        sleep_time.tv_nsec = (dwMilliseconds % 1000)*1000000;
+        nanosleep(&sleep_time, NULL);
+    }
 
-    result = (((long long)ftime.dwHighDateTime) << 32) / 10000.0;
-    return result + (ftime.dwLowDateTime / 10000.0);
+#elif defined(_WIN32)
+    #include <windows.h>
+    double time_now() {
+        // returns a timestamp in milliseconds
+        FILETIME   ftime;
+        SYSTEMTIME stime;
+        double result;
+
+        // get the current time and convert it to a filetime
+        GetSystemTime(&stime);
+        SystemTimeToFileTime(&stime, &ftime);
+
+        result = (((long long)ftime.dwHighDateTime) << 32) / 10000.0;
+        return result + (ftime.dwLowDateTime / 10000.0);
 }
 #else
-crash  // need to write another platform specific time function
+    crash  // need to write another platform specific time function
 #endif
 
 inline int gcd(int x, int y) {
@@ -86,8 +97,25 @@ char *strcpycat(char *left, char *right) {
 bool file_exists(const char *name) {
     struct stat buffer;
     return (stat(name, &buffer) == 0);
+
 }
 
+#if defined(__linux__) || defined(UNIX)
+char *get_working_dir() {
+    char * cwd = getcwd(NULL, 0);
+    size_t len = strlen(cwd);
+    if (cwd[len - 1] != '/') {
+        char *new_cwd = (char *)malloc(len + 2);
+        memcpy(new_cwd, cwd, len);
+        new_cwd[len] = '/';
+        new_cwd[len + 1] = '\0';
+        free(cwd);
+        return new_cwd;
+    } else {
+        return cwd;
+    }
+}
+#elif defined(_WIN32)
 char *get_working_dir() {
     char  str_fit_pad = 1;
     long  alloc_len = 32;  // start off with a 32 character buffer
@@ -154,6 +182,7 @@ char *get_working_dir() {
     return char_path;
     #endif
 }
+#endif
 
 char *dirname(const char *path) {
     if (path == NULL) return NULL;
@@ -179,17 +208,43 @@ char *copy_dir_string(const char *dir_path) {
 
     size_t new_alloc_len = strlen(dir_path);
     bool add_sep = new_alloc_len == 0;
-    if (!add_sep) add_sep = (dir_path[new_alloc_len - 1] != '\\' &&
-                             dir_path[new_alloc_len - 1] != '/');
+    #if defined(_WIN32)
+    if (!add_sep) add_sep = dir_path[new_alloc_len - 1] != '\';
+    #else
+    if (!add_sep) add_sep = dir_path[new_alloc_len - 1] != '/';
+    #endif
     if (add_sep) new_alloc_len += 1;
 
     char *new_alloc_path = (char *)malloc(new_alloc_len + 1);
     if (new_alloc_path == NULL) return NULL;
 
     memcpy(new_alloc_path, dir_path, new_alloc_len + 1);
+    #if defined(_WIN32)
     if (add_sep) new_alloc_path[new_alloc_len - 1] = '\\';
+    #else
+    if (add_sep) new_alloc_path[new_alloc_len - 1] = '/';
+    #endif
     new_alloc_path[new_alloc_len] = 0;
     return new_alloc_path;
+}
+
+char *sanitize_path(char *path, bool in_place=false) {
+    if (path == NULL) return NULL;
+
+    size_t path_len = strlen(path);
+    if (!in_place) {
+        char *new_path = (char *)malloc(path_len + 1);
+        memcpy(new_path, path, path_len);
+        path = new_path;
+    }
+    for (size_t i=0; i < path_len; i++) {
+        #if defined(_WIN32)
+        if (path[i] == '/') path[i] = '\\';
+        #else
+        if (path[i] == '\\') path[i] = '/';
+        #endif
+    }
+    return path;
 }
 
 inline bool caseinscmp(char x, char y) {
@@ -253,7 +308,11 @@ SplitStr *splitext(char *str) {
     size_t i = str_length;
     for (;;) {
         if (str[i] == '.') break;
-        if (i == 0 || str[i] == '/' || str[i] == '\\') {
+        #if defined(_WIN32)
+        if (i == 0 || str[i] == '\\') {
+        #else
+        if (i == 0 || str[i] == '/'){;
+        #endif
             i = str_length;
             break;
         }

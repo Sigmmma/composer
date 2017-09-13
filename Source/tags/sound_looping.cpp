@@ -32,7 +32,7 @@ LsndTag::LsndTag() : HaloTag() {
     this->detail_sound_count = 0;
 }
 
-LsndTag::LsndTag(char *data, long data_size, const char *new_filepath, const char *new_tags_dir) : 
+LsndTag::LsndTag(char *data, long data_size, const char *new_filepath, const char *new_tags_dir) :
                  HaloTag(data, data_size, new_filepath, new_tags_dir) {
     this->track_sounds  = NULL;
     this->detail_sounds = NULL;
@@ -42,7 +42,6 @@ LsndTag::LsndTag(char *data, long data_size, const char *new_filepath, const cha
 }
 
 LsndTag::~LsndTag() {
-    HaloTag::~HaloTag();
     this->unload_dependencies();
     free(this->track_sounds);
     free(this->detail_sounds);
@@ -69,7 +68,7 @@ void LsndTag::parse() {
     curr_pos = parse_dependency(&tag_body->continuous_damage_effect, curr_pos);
 
     if (tag_body->tracks.size > 0) {
-        curr_pos = parse_reflexive(&tag_body->tracks, curr_pos, 
+        curr_pos = parse_reflexive(&tag_body->tracks, curr_pos,
                                    sizeof(Track));
         track = (Track *)tag_body->tracks.pointer;
 
@@ -84,7 +83,7 @@ void LsndTag::parse() {
     }
 
     if (tag_body->detail_sounds.size > 0) {
-        curr_pos = parse_reflexive(&tag_body->detail_sounds, curr_pos, 
+        curr_pos = parse_reflexive(&tag_body->detail_sounds, curr_pos,
                                    sizeof(DetailSound));
         d_sound = (DetailSound *)tag_body->detail_sounds.pointer;
 
@@ -184,7 +183,7 @@ bool LsndTag::load_dependencies() {
 
         if (this->detail_sounds[i].sound == NULL)
             this->detail_sounds[i].sound = (SndTag *)load_tag_at_path(
-                strcpycat(this->tags_dir, 
+                strcpycat(this->tags_dir,
                     strcpycat((char *)d_sounds->sound.path_pointer, ".sound"), 0, 1), this->tags_dir);
     }*/
     return false;
@@ -333,7 +332,7 @@ LsndTag *make_lsnd_tag_for_snd_tag(SndTag *snd_tag) {
     free(dir_split->right);
     free(dir_split);
     if (ext_split == NULL) return NULL;
-    
+
     uint32 path_size = strlen(ext_split->left) + 1;
 
     char *lsnd_data = (char *)calloc(
@@ -353,17 +352,17 @@ LsndTag *make_lsnd_tag_for_snd_tag(SndTag *snd_tag) {
 
     if (lsnd_data == NULL) return NULL;
 
-    tag_header->tag_class = TAG_CLASS_LSND;
+    tag_header->tag_class = TagClass::lsnd;
     tag_header->header_size = sizeof(TagHeader);
     tag_header->version = 3;
     tag_header->integ0 = 0x00;
     tag_header->integ1 = 0xFF;
-    tag_header->engine_id = ENGINE_ID_HALO_1;
+    tag_header->engine_id = EngineId::halo_1;
 
     tag_data->tracks.size = 1;
     tag_data->tracks.pointer = (pointer32)track;
 
-    track->loop.tag_class    = TAG_CLASS_SND;
+    track->loop.tag_class    = TagClass::snd;
     track->loop.path_length  = path_size - 1;
     track->loop.path_pointer = (pointer32)snd_path;
 
@@ -379,6 +378,6 @@ LsndTag *make_lsnd_tag_for_snd_tag(SndTag *snd_tag) {
     lsnd_tag->tag_data = (char *)tag_data;
     lsnd_tag->tag_data_size = sizeof(TagHeader) + sizeof(LsndBody) + sizeof(Track) + path_size;
     lsnd_tag->track_sound_count = 1;
-    
+
     return lsnd_tag;
 }

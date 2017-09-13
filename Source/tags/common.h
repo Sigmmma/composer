@@ -93,10 +93,10 @@ void byteswap_rawdata_ref(RawdataRef &rawdata_ref);
 void byteswap_dependency(Dependency &dependency);
 void byteswap_reflexive(Reflexive &reflexive);
 
-inline void byteswap_16(char *val);
-inline void byteswap_32(char *val);
-inline void byteswap_array_16(char *data, unsigned int size);
-inline void byteswap_array_32(char *data, unsigned int size);
+void byteswap_16(char *val);
+void byteswap_32(char *val);
+void byteswap_array_16(char *data, unsigned int size);
+void byteswap_array_32(char *data, unsigned int size);
 
 char *make_indent_str(int indent);
 void print_tag_header(TagHeader &tag_header, int indent);

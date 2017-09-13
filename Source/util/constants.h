@@ -55,19 +55,20 @@ Define the fourcc ints for the tag classes.
 TODO: There should be 81 more of these for the basic Halo 1 classes, and
 even more if you include open sauce. I dont have time to type them.
 */
-enum TagClass : uint32 {
-    TAG_CLASS_SND  = FOURCC('s', 'n', 'd', '!'),
-    TAG_CLASS_LSND = FOURCC('l', 's', 'n', 'd'),
-    TAG_CLASS_NONE = 0xFFFFFFFF,
+enum class TagClass : uint32 {
+    snd  = FOURCC('s', 'n', 'd', '!'),
+    lsnd = FOURCC('l', 's', 'n', 'd'),
+    none = 0xFFFFFFFF,
 };
 
 /*
 Define the fourcc ints for the blam engine versions.
 */
 
-enum EngineId : uint32 {
-    ENGINE_ID_HALO_1 = FOURCC('b', 'l', 'a', 'm'),
-    ENGINE_ID_HALO_2 = FOURCC('!', 'm', 'l', 'b'),
+enum class EngineId : uint32 {
+    halo_1 = FOURCC('b', 'l', 'a', 'm'),
+    halo_2 = FOURCC('!', 'm', 'l', 'b'),
+    FORCE_32BIT = 0xFFFFFFFF,
 };
 
 #pragma pack(pop)
