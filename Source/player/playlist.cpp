@@ -27,6 +27,7 @@ serializing itself to a file and loading settings from a file.
 #include <iostream>
 
 using std::cout;
+using std::max;
 
 bool is_valid_command(Command *cmd) {
     if (cmd == NULL)             return false;
@@ -285,13 +286,13 @@ double Playlist::fade_in_end() {
     LsndTag *lsnd_tag = this->get_lsnd_tag();
     if (lsnd_tag == NULL) return 0.0;
     LoadedTrack l_track = lsnd_tag->track_sounds[this->track];
-    return std::max(0.0, (double)l_track.fade_in_duration);
+    return max(0.0, (double)l_track.fade_in_duration);
 }
 double Playlist::fade_out_end() {
     LsndTag *lsnd_tag = this->get_lsnd_tag();
     if (lsnd_tag == NULL) return 0.0;
     LoadedTrack l_track = lsnd_tag->track_sounds[this->track];
-    return std::max(0.0, (double)l_track.fade_out_duration);
+    return max(0.0, (double)l_track.fade_out_duration);
 }
 
 bool Playlist::fade_in() {
