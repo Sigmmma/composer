@@ -22,19 +22,24 @@
 #include <string.h>
 
 #ifdef UNICODE
-    #define PATHSTR_TYPE wchar_t
+    typedef wchar_t *PATHSTR_TYPE;
     const int PATHSTR_SIZE = sizeof(wchar_t);
-    const PATHSTR_TYPE PATH_DELIMS[] = L"\\/";
+    const PATHSTR_TYPE PATH_DELIMS = L"\\/";
 #else
-    #define PATHSTR_TYPE char
+    typedef char *PATHSTR_TYPE;
     const int PATHSTR_SIZE = sizeof(char);
-    const PATHSTR_TYPE PATH_DELIMS[] = "\\/";
+    const PATHSTR_TYPE PATH_DELIMS = "\\/";
 #endif // !UNICODE
 
 #if defined(__linux__) || defined(UNIX)
     #include <time.h>
+
+    // emulate sleep from windows
+    void Sleep(uint32 dwMilliseconds);
+
 #elif defined(_WIN32)
     #include <windows.h>
+    // Sleep is already defined for windows
 #endif
 
 typedef struct SplitStr {
@@ -50,5 +55,6 @@ bool  file_exists(const char *name);
 char *dirname(const char *path);
 char *get_working_dir();
 char *copy_dir_string(const char *dir_path);
+char *sanitize_path(char *tagpath, bool in_place);
 SplitStr *splitdir(char *str, char *dir);
 SplitStr *splitext(char *str);

@@ -41,6 +41,10 @@ juce::String get_command_text_string(Command *cmd);
     your controls and content.
 */
 
+using std::min;
+using std::max;
+using std::bind;
+
 class MainContentComponent    : public juce::Component,
                                 public juce::Slider::Listener,
                                 public juce::TextButton::Listener,
@@ -50,6 +54,7 @@ public:
     //==============================================================================
     MainContentComponent()
     {
+        srand(time(0));
         // setup the window and the controls panel
         setSize (350, 500);
         addAndMakeVisible(controls_panel);
@@ -58,8 +63,8 @@ public:
         controls_panel.set_slider_listener_override(this);
         controls_panel.set_button_listener_override(this);
 
-        this->active_track   = NULL;
-        this->active_command = NULL;
+        this->active_track   = 0;
+        this->active_command = 0;
 
         this->playlist_reader_count = 0;
         this->lock_playlist_reading = false;
@@ -119,7 +124,7 @@ public:
     }
 
     void setVolume(float new_val) {
-        this->controls_panel.playbackPanel->volume->setValue(max(0.0, min(100.0, new_val * 100)),
+        this->controls_panel.playbackPanel->volume->setValue(max(0.0, min(100.0, new_val * 100.0)),
                                                              dontSendNotification);
         this->audioSourcePlayer.setGain((float)(this->controls_panel.playbackPanel->volume->getValue() / 100.0));
     }
@@ -282,11 +287,11 @@ public:
                         if (!tag->is_valid()) {
                             // tag wasn't valid
                             delete tag;
-                        } else if (tag->tag_header->tag_class == TAG_CLASS_SND) {
+                        } else if (tag->tag_header->tag_class == TagClass::snd) {
                             // add the tag to the playlist
                             this->playlist->add_command_list((SndTag *)tag);
                             delete tag; // unload the sound since we dont need it now
-                        } else if (tag->tag_header->tag_class == TAG_CLASS_LSND) {
+                        } else if (tag->tag_header->tag_class == TagClass::lsnd) {
                             // add the tag to the playlist
                             this->playlist->add_command_list((LsndTag *)tag);
                         } else {
@@ -387,8 +392,8 @@ public:
                     }
                     else if (!name.compareIgnoreCase(juce::String("play alt button"))) {
                         // command "alt" pressed
-                        SndTag *snd_tag     = playlist->get_snd_tag(LSND_SECTION_TYPE_LOOP, false);
-                        SndTag *snd_tag_alt = playlist->get_snd_tag(LSND_SECTION_TYPE_LOOP, true);
+                        SndTag *snd_tag     = playlist->get_snd_tag(LsndSectionType::loop, false);
+                        SndTag *snd_tag_alt = playlist->get_snd_tag(LsndSectionType::loop, true);
                         bool new_alt_state = button->getToggleState();
                         if (snd_tag == NULL && !new_alt_state && snd_tag_alt != NULL) {
                             button->setToggleState(true, dontSendNotification);
@@ -475,7 +480,7 @@ public:
                     SndTag *snd_tag = playlist->get_snd_tag(this->playlist->curr_section, cmd->alt);
                     if (snd_tag == NULL) {
                         slider->setValue((double)cmd->perm_index + 1, dontSendNotification);
-                    } 
+                    }
                     else if (1.0 <= val && val <= (double)(snd_tag->max_actual_perm() + 1)) {
                         cmd->perm_index = ((sint16)val) - 1;
                     }
@@ -485,7 +490,7 @@ public:
                     if (1.0 <= val && val <= (double)(COMMAND_LOOP_MAX + 1)) {
                         cmd->loop_count = ((uint32)val) - 1;
                     }
-                } 
+                }
                 else {
                     return;
                 }
@@ -637,7 +642,7 @@ public:
 
         CommandList *cmdls = this->playlist->command_lists;
         if (cmdls == NULL) {
-            root->clearSubItems(); 
+            root->clearSubItems();
             return;
         }
 
@@ -781,7 +786,7 @@ public:
             return;
         }
 
-        SndTag *snd_tag = this->playlist->get_snd_tag(LSND_SECTION_TYPE_LOOP, cmd->alt);
+        SndTag *snd_tag = this->playlist->get_snd_tag(LsndSectionType::loop, cmd->alt);
 
         commands_panel->loopCommandCountSlider->setValue((double)(cmd->loop_count + 1));
         if (snd_tag != NULL) {
@@ -867,7 +872,7 @@ public:
         while (this->lock_playlist_reading) {
             if (timeout > 100) return true;
             Sleep(1);
-            timeout += 1;
+            timeout++;
         }
         return false;
     }
@@ -877,7 +882,7 @@ public:
         while (this->playlist_reader_count) {
             if (timeout > 100) return true;
             Sleep(1);
-            timeout += 1;
+            timeout++;
         }
         this->lock_playlist_reading = true;
         return false;
@@ -936,12 +941,12 @@ public:
         float   fade_out_end = this->playlist->fade_out_end();
 
         if (this->playlist->fade_in() && fade_in_end != 0.0) {
-            fade_scale = (float)abs(this->playlist->play_timer() / fade_in_end);
-        } else if (this->playlist->fade_out() && fade_out_end != 0.0) {
-            fade_scale = (float)(1.0 - abs(this->playlist->fade_out_timer() / fade_out_end));
+            fade_scale = abs((float)this->playlist->play_timer()) / fade_in_end;
+        } else if (this->playlist->fade_out() && fade_out_end != 0.0f) {
+            fade_scale = (fade_out_end - abs((float)this->playlist->fade_out_timer())) / fade_out_end;
         }
 
-        fade_scale = (float)max(0.0, min(1.0, fade_scale));
+        fade_scale = max(0.0f, min(1.0f, fade_scale));
 
         float  *i_samples;
         float  *o_samples;
@@ -963,11 +968,10 @@ public:
             buffers[j] = bufferToFill.buffer->getWritePointer(j, bufferToFill.startSample);
         }
 
-        //this->updatePlayInfo();
-        MessageManager::callAsync(std::bind(&MainContentComponent::updatePlayInfo, this));
+        MessageManager::callAsync(bind(&MainContentComponent::updatePlayInfo, this));
 
         for (;;) {
-            if (fade_scale <= 0.0) break;
+            if (fade_scale <= 0.0f) break;
 
             // loop here until the number of samples being requested have been given
             // loop will break at the bottom if the sample buffer has been filled.
@@ -995,7 +999,7 @@ public:
                 }
 
                 if (prev_cmd != this->playlist->curr_command()) {
-                    MessageManager::callAsync(std::bind(&MainContentComponent::updateTreeSelections, this));
+                    MessageManager::callAsync(bind(&MainContentComponent::updateTreeSelections, this));
                 }
             }
 
@@ -1011,6 +1015,7 @@ public:
 
             uint32  i = 0;
             uint32  samps_to_give = min(this->curr_samples->decoded_sample_count(), req_samp_ct);
+
             // copy the decoded samples into the buffer
             for (uint32 c = 0; c < channels; c++) {
                 // sample data is interleaved, so we need to iterate over it like so.
@@ -1042,9 +1047,9 @@ public:
             this->playlist->stop();
             this->playlist->inc_command_list();
             if (this->playlist->get_lsnd_tag() != NULL) this->playlist->play();
-            MessageManager::callAsync(std::bind(&MainContentComponent::updateTreeSelections, this));
-            MessageManager::callAsync(std::bind(&MainContentComponent::reloadPlaybackButtons, this));
-            MessageManager::callAsync(std::bind(&MainContentComponent::updatePlayInfo, this));
+            MessageManager::callAsync(bind(&MainContentComponent::updateTreeSelections, this));
+            MessageManager::callAsync(bind(&MainContentComponent::reloadPlaybackButtons, this));
+            MessageManager::callAsync(bind(&MainContentComponent::updatePlayInfo, this));
         }
 
         this->setActiveIndexes();
@@ -1147,9 +1152,9 @@ void commandDoubleClickedCallback(void *object, int index) {
 
     app->stopPlayback();
 
-    // play the selected permutation 
+    // play the selected permutation
     app->startPlayback();
-    app->playlist->curr_section = LSND_SECTION_TYPE_LOOP;
+    app->playlist->curr_section = LsndSectionType::loop;
     app->playlist->select_command(index);
 
     app->setActiveIndexes();
