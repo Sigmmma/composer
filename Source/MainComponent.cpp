@@ -28,6 +28,7 @@
 #include "config.h"
 #include "util/util.h"
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <ctime>
 
 void trackClickedCallback(void *object, int index);
 void trackDoubleClickedCallback(void *object, int index);
@@ -44,6 +45,7 @@ juce::String get_command_text_string(Command *cmd);
 using std::min;
 using std::max;
 using std::bind;
+using std::time;
 
 class MainContentComponent    : public juce::Component,
                                 public juce::Slider::Listener,

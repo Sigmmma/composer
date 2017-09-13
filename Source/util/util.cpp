@@ -209,7 +209,7 @@ char *copy_dir_string(const char *dir_path) {
     size_t new_alloc_len = strlen(dir_path);
     bool add_sep = new_alloc_len == 0;
     #if defined(_WIN32)
-    if (!add_sep) add_sep = dir_path[new_alloc_len - 1] != '\';
+    if (!add_sep) add_sep = dir_path[new_alloc_len - 1] != '\\';
     #else
     if (!add_sep) add_sep = dir_path[new_alloc_len - 1] != '/';
     #endif
