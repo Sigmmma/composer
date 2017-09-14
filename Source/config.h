@@ -23,7 +23,11 @@
 const uint32 CONFIG_HEADER_SIG  = FOURCC('?', 'p', 'm', 'C');
 const uint32 CONFIG_HEADER_SIZE = 128;
 
+#if defined(_WIN32)
 const char DEF_CONFIG_NAME[] = "composer_config.cfg";
+#else
+const char DEF_CONFIG_NAME[] = ".composer_config.cfg";
+#endif
 
 
 typedef struct ConfigData {
