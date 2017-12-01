@@ -27,21 +27,25 @@ other constants, such as the max size a tag can be before it wont be loaded.
 #include <cstdint>
 #include <stdio.h>
 #include <sys/types.h>
+#include "JuceHeader.h"
+using juce::uint8;
+using juce::uint16;
+using juce::uint32;
 
-typedef uint8_t  uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
 typedef int8_t   sint8;
 typedef int16_t  sint16;
 typedef int32_t  sint32;
+//typedef uint8_t  uint8;
+//typedef uint16_t uint16;
+//typedef uint32_t uint32;
 
-typedef uint32 pointer32;
+typedef uint32_t pointer32;
 
-typedef uint8 pad;
-typedef uint16 pad2;
-typedef uint32 pad4;
+typedef uint8_t  pad;
+typedef uint16_t pad2;
+typedef uint32_t pad4;
 
-#define FOURCC(a, b, c, d) (uint32)(((((( a << 8) | b) << 8) | c) << 8) | d)
+#define FOURCC(a, b, c, d) (uint32)(((((( (a) << 8) | (b)) << 8) | (c)) << 8) | (d))
 #define DUMB_STATIC_ASSERT(x) typedef char assertion_on_struct_size[(!!(x))*2-1]
 
 const uint32 MAX_TAG_SIZE    = 1024 * 1024 * 64;  // max of 64Mb tag file
@@ -70,5 +74,4 @@ enum class EngineId : uint32 {
     halo_2 = FOURCC('!', 'm', 'l', 'b'),
     FORCE_32BIT = 0xFFFFFFFF,
 };
-
 #pragma pack(pop)

@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.7
+    Fixed a bug with playlist not generating correct default commands
+
   * v1.0.6
     Fixed a few gui bugs
     Fixed a few string related bugs

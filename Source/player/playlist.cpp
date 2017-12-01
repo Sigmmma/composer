@@ -405,6 +405,8 @@ bool Playlist::inc_command_list() {
     CommandList *new_cmdl;
     sint32 new_command_list = this->_curr_command_list;
     uint32 tries = this->command_list_count;
+    double time = time_now();
+    srand(*((unsigned int *)(&time)));
 
     do {
         if (this->shuffle) {

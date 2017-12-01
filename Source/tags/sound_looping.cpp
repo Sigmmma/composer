@@ -131,6 +131,8 @@ bool LsndTag::load_dependencies() {
     if (!this->is_valid()) return true;
     if (this->track_sounds != NULL && this->detail_sounds != NULL) return false;
 
+    free(this->track_sounds);
+    free(this->detail_sounds);
     this->track_sounds = (LoadedTrack *)calloc(
         this->track_sound_count, sizeof(LoadedTrack));
     this->detail_sounds = (LoadedDetailSound  *)calloc(

@@ -56,7 +56,8 @@ public:
     //==============================================================================
     MainContentComponent()
     {
-        srand(time(0));
+        double time = time_now();
+        srand(*((unsigned int *)(&time)));
         // setup the window and the controls panel
         setSize (350, 500);
         addAndMakeVisible(controls_panel);
