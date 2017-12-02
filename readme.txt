@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.8
+    Fixed a tiny memory leak
+
   * v1.0.7
     Fixed a bug with rng not being seeded properly
 
