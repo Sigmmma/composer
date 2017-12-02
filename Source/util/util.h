@@ -47,7 +47,6 @@ typedef struct SplitStr {
     char *right;
 } SplitStr;
 
-inline int gcd(int x, int y);
 double time_now();
 char *strcpycat(char *left, char *right);
 char *strcpycat(char *left, char *right, bool l_free, bool r_free);
