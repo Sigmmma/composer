@@ -60,15 +60,6 @@
     crash  // need to write another platform specific time function
 #endif
 
-inline int gcd(int x, int y) {
-    for (;;) {
-        if (x == 0) return y;
-        y %= x;
-        if (y == 0) return x;
-        x %= y;
-    }
-}
-
 char *strcpycat(char *left, char *right, bool l_free, bool r_free) {
     char *new_str = strcpycat(left, right);
     if (l_free && left != NULL)  free(left);
@@ -102,18 +93,17 @@ bool file_exists(const char *name) {
 
 #if defined(__linux__) || defined(UNIX)
 char *get_working_dir() {
-    char * cwd = getcwd(NULL, 0);
+    char *cwd = getcwd(NULL, 0);
+    char *tmp_cwd = cwd;
     size_t len = strlen(cwd);
     if (cwd[len - 1] != '/') {
-        char *new_cwd = (char *)malloc(len + 2);
-        memcpy(new_cwd, cwd, len);
-        new_cwd[len] = '/';
-        new_cwd[len + 1] = '\0';
-        free(cwd);
-        return new_cwd;
-    } else {
-        return cwd;
+        char *cwd = (char *)malloc(len + 2);
+        memcpy(cwd, tmp_cwd, len);
+        cwd[len] = '/';
+        cwd[len + 1] = 0;
+        free(tmp_cwd);
     }
+    return cwd;
 }
 #elif defined(_WIN32)
 char *get_working_dir() {
@@ -132,17 +122,18 @@ char *get_working_dir() {
     while (path_len == alloc_len) {
         if (alloc_len * PATHSTR_SIZE > 1024 * 2) {
             // should NEVER need larger than a 2kb string buffer
-            return NULL;
+            path_len = 0;
+            break;
         }
 
-        // the allocated length isn't long enough; free the old
-        // path string and allocate a larger one.
+        // the allocated length isn't long enough
+        // free the old path string and allocate a larger one.
         alloc_len *= 2;
         free(path);
         path = (PATHSTR_TYPE)malloc((alloc_len + str_fit_pad) * PATHSTR_SIZE);
         if (path == NULL) {
-            // couldn't allocate buffer
-            return NULL;
+            path_len = 0;
+            break;
         }
 
         path_len = GetModuleFileName(NULL, path, alloc_len);
@@ -151,6 +142,7 @@ char *get_working_dir() {
     if (path_len == 0 || path_len >= alloc_len) {
         // couldn't get the path, or doing so would make
         // a larger string than would ever be necessary
+        free(path);
         return NULL;
     }
 
@@ -198,7 +190,7 @@ char *dirname(const char *path) {
     if (dir == NULL)   return NULL;
     else if (path_len) strncpy(dir, path, path_len);
 
-    dir[path_len] = '\0';
+    dir[path_len] = 0;
     return dir;
 }
 
