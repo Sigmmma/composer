@@ -284,6 +284,10 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.0.9
+    Applied exponential scale to volume so it applies gain
+    in a way more suited to human ears.
+
   * v1.0.8
     Fixed a tiny memory leak
 
