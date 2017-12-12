@@ -29,6 +29,7 @@
 #include "util/util.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <ctime>
+#include <math.h>
 
 void trackClickedCallback(void *object, int index);
 void trackDoubleClickedCallback(void *object, int index);
@@ -129,7 +130,7 @@ public:
     void setVolume(float new_val) {
         this->controls_panel.playbackPanel->volume->setValue(max(0.0, min(100.0, new_val * 100.0)),
                                                              dontSendNotification);
-        this->audioSourcePlayer.setGain((float)(this->controls_panel.playbackPanel->volume->getValue() / 100.0));
+        this->audioSourcePlayer.setGain((pow(10.0f, this->getVolume()) - 1.0f) / 9.0f);
     }
 
     void buttonClicked(juce::Button* button) override
