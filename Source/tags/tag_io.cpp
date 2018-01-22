@@ -191,15 +191,15 @@ bool HaloTag::insert_reflexive_entry(Reflexive *reflexive, uint32 entry_size, si
     if (new_entry == NULL) return true;
 
     // if the current command_list doesnt exist we just use the new one as it
-    if (reflexive->pointer == NULL || reflexive->size == 0) {
+    if (get_tag_pointer(reflexive) == NULL || reflexive->size == 0) {
         free((char *)reflexive->pointer);
-        reflexive->pointer = (pointer32)new_entry;
+        set_tag_pointer(reflexive, (uint64)new_entry);
         reflexive->size = 1;
         return false;
     }
 
     char *new_entries = (char *)realloc(
-        (char *)reflexive->pointer, (reflexive->size + 1) * entry_size);
+        (char *)get_tag_pointer(reflexive), (reflexive->size + 1) * entry_size);
     if (new_entries == NULL) {
         // couldn't allocate memory for the larger reflexive array.
         // free the new_entry
@@ -217,7 +217,7 @@ bool HaloTag::insert_reflexive_entry(Reflexive *reflexive, uint32 entry_size, si
     memcpy(new_entries + (index * entry_size), new_entry, entry_size);
     free(new_entry);
 
-    reflexive->pointer = (pointer32)new_entries;
+    set_tag_pointer(reflexive, (uint64)new_entries);
     reflexive->size++;
 
     return false;

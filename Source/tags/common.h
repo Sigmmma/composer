@@ -84,6 +84,14 @@ typedef struct FromToSInt16 {
 } FromToSInt16; DUMB_STATIC_ASSERT(sizeof(FromToSInt16) == 4);
 
 
+void set_tag_pointer(RawdataRef *, uint64);
+void set_tag_pointer(Dependency *, uint64);
+void set_tag_pointer(Reflexive *, uint64);
+
+uint64 get_tag_pointer(RawdataRef *);
+uint64 get_tag_pointer(Dependency *);
+uint64 get_tag_pointer(Reflexive *);
+
 char *parse_dependency(Dependency *dependency, char *curr_pos);
 char *parse_reflexive(Reflexive *reflexive, char *curr_pos, size_t struct_size);
 char *parse_rawdata_ref(RawdataRef *rawdata_ref, char *curr_pos);

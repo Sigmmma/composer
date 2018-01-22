@@ -31,19 +31,23 @@ other constants, such as the max size a tag can be before it wont be loaded.
 using juce::uint8;
 using juce::uint16;
 using juce::uint32;
+using juce::uint64;
 
 typedef int8_t   sint8;
 typedef int16_t  sint16;
 typedef int32_t  sint32;
+typedef int64_t  sint64;
 //typedef uint8_t  uint8;
 //typedef uint16_t uint16;
 //typedef uint32_t uint32;
+//typedef uint64_t uint64;
 
 typedef uint32_t pointer32;
 
 typedef uint8_t  pad;
 typedef uint16_t pad2;
 typedef uint32_t pad4;
+typedef uint64_t pad8;
 
 #define FOURCC(a, b, c, d) (uint32)(((((( (a) << 8) | (b)) << 8) | (c)) << 8) | (d))
 #define DUMB_STATIC_ASSERT(x) typedef char assertion_on_struct_size[(!!(x))*2-1]
@@ -52,20 +56,6 @@ const uint32 MAX_TAG_SIZE    = 1024 * 1024 * 64;  // max of 64Mb tag file
 const uint32 MAX_CFG_STR_LEN = 1024 * 4;          // max of 1Kb per string
 const uint32 TAG_HEADER_SIZE = 64;  // a tag must be at least the size of its header
 const long INDENT_SIZE = 4; // number of spaces to indent when printing
-
-#define IS_32BIT 0
-#define IS_64BIT 0
-#if _WIN64
-    #define IS_64BIT 1
-#elif _WIN32
-    #define IS_32BIT 1
-#elif defined __GNUC__
-    #if __x86_64__ || __ppc64__
-        #define IS_64BIT 1
-    #else
-        #define IS_32BIT 1
-    #endif
-#endif
 
 /*
 Define the fourcc ints for the tag classes.

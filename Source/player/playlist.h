@@ -59,12 +59,10 @@ typedef struct CommandList {
     uint32        sig;           // should be COMMAND_LIST_SIG
 
     uint32        lsnd_path_len;
-    char         *lsnd_path;     // tags_dir relative path to the lsnd_tag to play.
+    pad           pad0[4];
 
     sint32        command_count; // signed to prevent sint32 comparison to uint32.
-    Command      *commands;      // commands specifying which permutations to play.
-
-    LsndTag      *lsnd_tag;      // the LsndTag this permlist governs playing.
+    pad           pad0[8];
 
     uint32        play_length;   // number of seconds to play this lsnd_tag
                                  // before switching to the next lsnd_tag.
@@ -74,24 +72,32 @@ typedef struct CommandList {
     uint32        is_sound : 1;  // lsnd_path actually points to a SndTag, and
                                  // a fake LsndTag must be made to handle it.
 
-    pad    slack_space[COMMAND_LIST_SIZE - 4 * 8];
+    pad    slack_space[COMMAND_LIST_SIZE - 4 * 8 - sizeof(char *) * 3];
+
+    char         *lsnd_path;     // tags_dir relative path to the lsnd_tag to play.
+    Command      *commands;      // commands specifying which permutations to play.
+    LsndTag      *lsnd_tag;      // the LsndTag this permlist governs playing.
 } CommandList; DUMB_STATIC_ASSERT(sizeof(CommandList) == COMMAND_LIST_SIZE);
 
 typedef struct PlaylistHeader {
     uint32       sig;                // should be PLAYLIST_HEADER_SIG
 
     uint32       tags_dir_len;
-    char        *tags_dir;           // tags_dir that all the lsnd_tags are located in.
+    pad          pad0[4];
 
     sint32       command_list_count; // signed to prevent sint32 comparison to uint32
-    CommandList *command_lists;      // permlists specifying which lsnd_tags to play and how.
+    pad          pad1[4];
 
     // flags
     uint32       shuffle : 1;        // go through permlists in a random order.
     uint32       loop    : 1;        // endlessly play the permlists.
     uint32       unused  : 30;
 
-    pad          slack_space[PLAYLIST_HEADER_SIZE - 4 * 6];
+    pad          slack_space[PLAYLIST_HEADER_SIZE - 4 * 6 - sizeof(char *) * 2];
+
+    char        *tags_dir;           // tags_dir that all the lsnd_tags are located in.
+    CommandList *command_lists;      // permlists specifying which lsnd_tags to play and how.
+
 } PlaylistHeader; DUMB_STATIC_ASSERT(sizeof(PlaylistHeader) == PLAYLIST_HEADER_SIZE);
 
 
