@@ -53,6 +53,20 @@ const uint32 MAX_CFG_STR_LEN = 1024 * 4;          // max of 1Kb per string
 const uint32 TAG_HEADER_SIZE = 64;  // a tag must be at least the size of its header
 const long INDENT_SIZE = 4; // number of spaces to indent when printing
 
+#define IS_32BIT 0
+#define IS_64BIT 0
+#if _WIN64
+    #define IS_64BIT 1
+#elif _WIN32
+    #define IS_32BIT 1
+#elif defined __GNUC__
+    #if __x86_64__ || __ppc64__
+        #define IS_64BIT 1
+    #else
+        #define IS_32BIT 1
+    #endif
+#endif
+
 /*
 Define the fourcc ints for the tag classes.
 
