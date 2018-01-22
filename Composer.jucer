@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="BbKBnW" name="Composer" displaySplashScreen="0" reportAppUsage="0"
+<JUCERPROJECT id="BbKBnW" name="Composer" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" projectType="guiapp" version="1.0.7"
               bundleIdentifier="com.mosmods.composer" includeBinaryInAppConfig="0"
               jucerVersion="5.2.0" cppLanguageStandard="11" defines="JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1"
@@ -191,6 +191,10 @@
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
                        linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Composer"/>
+        <CONFIGURATION name="Release 64" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" warningsAreErrors="1" optimisation="3"
+                       enableIncrementalLinking="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>

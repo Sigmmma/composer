@@ -50,7 +50,7 @@ sint16 SndTag::max_actual_perm() {
     SndBody *snd_body = (SndBody *)this->tag_data;
     if (this->curr_pitch_range >= snd_body->pitch_ranges.size) return -1;
 
-    PitchRange *p_range = (PitchRange *)snd_body->pitch_ranges.pointer;
+    PitchRange *p_range = (PitchRange *)get_tag_pointer(&snd_body->pitch_ranges);
     return p_range[this->curr_pitch_range].actual_permutation_count - 1;
 }
 
@@ -75,7 +75,7 @@ void SndTag::parse() {
     if (tag_body->pitch_ranges.size > 0) {
         curr_pos = parse_reflexive(&tag_body->pitch_ranges, curr_pos,
                                    sizeof(PitchRange));
-        p_range = (PitchRange *)tag_body->pitch_ranges.pointer;
+        p_range = (PitchRange *)get_tag_pointer(&tag_body->pitch_ranges);
 
         this->curr_pitch_range = 0;
         this->max_pitch_range  = tag_body->pitch_ranges.size - 1;
@@ -87,7 +87,7 @@ void SndTag::parse() {
 
                 curr_pos = parse_reflexive(&p_range->permutations, curr_pos,
                                            sizeof(Permutation));
-                perm = (Permutation *)p_range->permutations.pointer;
+                perm = (Permutation *)get_tag_pointer(&p_range->permutations);
 
                 for (sint32 j = 0; j < p_range->permutations.size; j++, perm++) {
                     byteswap_snd_permutation(perm);
@@ -163,7 +163,7 @@ void SndTag::print() {
     //print_reflexive(body->pitch_ranges, "pitch_ranges", 1);
 
     if (body->pitch_ranges.size > 0) {
-        p_range = (PitchRange *)body->pitch_ranges.pointer;
+        p_range = (PitchRange *)get_tag_pointer(&body->pitch_ranges);
 
         for (sint32 i = 0; i < body->pitch_ranges.size; i++, p_range++) {
             cout << indent1 << "{ #" << i << " pitch_range, ptr == "
@@ -176,7 +176,7 @@ void SndTag::print() {
 
             //print_reflexive(p_range->permutations, "permutations", 2);
             if (p_range->permutations.size > 0) {
-                perm = (Permutation *)p_range->permutations.pointer;
+                perm = (Permutation *)get_tag_pointer(&p_range->permutations);
                 for (sint32 j = 0; j < p_range->permutations.size; j++, perm++) {
                     cout << indent2 << "{ #" << j << " permutation, ptr == "
                         << (&perm) << '\n';
@@ -210,7 +210,7 @@ bool SndTag::set_actual_perm_index(sint16 new_index) {
         return true;
     }
 
-    PitchRange *p_range = (PitchRange *)body->pitch_ranges.pointer;
+    PitchRange *p_range = (PitchRange *)get_tag_pointer(&body->pitch_ranges);
     if (p_range == NULL || this->curr_pitch_range < 0) return true;
     if (new_index < 0) new_index = -1;
     if (new_index >= p_range[this->curr_pitch_range].permutations.size) {
@@ -229,9 +229,9 @@ bool SndTag::inc_actual_perm_index() {
     int          loop_count = 0;
     SndBody     *body    = (SndBody *)this->tag_data;
     if (body == NULL) return true;
-    PitchRange  *p_range = (PitchRange *)body->pitch_ranges.pointer;
+    PitchRange  *p_range = (PitchRange *)get_tag_pointer(&body->pitch_ranges);
     if (p_range == NULL || this->curr_pitch_range < 0) return true;
-    Permutation *perm    = (Permutation *)p_range[this->curr_pitch_range].permutations.pointer;
+    Permutation *perm    = (Permutation *)get_tag_pointer(&p_range[this->curr_pitch_range].permutations);
 
     sint16 next_actual_perm  = this->curr_actual_perm;
     sint16 actual_perm_count = p_range->actual_permutation_count;
@@ -274,7 +274,7 @@ bool SndTag::inc_perm_index() {
 
     SndBody    *body = (SndBody *)this->tag_data;
     if (body == NULL) return true;
-    PitchRange *p_range = (PitchRange *)body->pitch_ranges.pointer;
+    PitchRange *p_range = (PitchRange *)get_tag_pointer(&body->pitch_ranges);
     if (p_range == NULL || this->curr_pitch_range < 0) return true;
     sint32 perm_count = p_range[this->curr_pitch_range].permutations.size;
     sint16 next_perm;
@@ -288,7 +288,7 @@ bool SndTag::inc_perm_index() {
         next_perm = this->curr_perm;
     } else {
         // incrementing to the next permutation piece in the chain
-        Permutation *perm = (Permutation *)p_range->permutations.pointer;
+        Permutation *perm = (Permutation *)get_tag_pointer(&p_range->permutations);
         next_perm = perm[this->curr_perm].next_permutation_index;
     }
 
@@ -318,9 +318,9 @@ SoundSamples *SndTag::get_curr_samples() {
     // check if no permutations, or if we hit the end of the chain
     if (this->curr_actual_perm == -1 || this->curr_perm == -1) return NULL;
 
-    PitchRange   *p_range = (PitchRange *)body->pitch_ranges.pointer;
+    PitchRange   *p_range = (PitchRange *)get_tag_pointer(&body->pitch_ranges);
     if (p_range == NULL) return NULL;
-    Permutation  *perm    = (Permutation *)p_range[this->curr_pitch_range].permutations.pointer;
+    Permutation  *perm    = (Permutation *)get_tag_pointer(&p_range[this->curr_pitch_range].permutations);
     if (perm == NULL)    return NULL;
 
     uint8 bytes_per_sample = sizeof(sint16);
@@ -426,8 +426,8 @@ SoundSamples::SoundSamples(SndPermutation *snd_perm, uint8 channel_count,
     this->sample_rate       = sample_rate;
     this->bytes_per_sample  = bytes_per_sample;
 
-    if (snd_perm->samples.pointer != 0) {
-        this->sample_data  = (char *)snd_perm->samples.pointer;
+    if (get_tag_pointer(&snd_perm->samples) != 0) {
+        this->sample_data  = (char *)get_tag_pointer(&snd_perm->samples);
         this->decoding_pos = this->sample_data;
         this->sample_data_size = snd_perm->samples.size;
     }

@@ -23,11 +23,34 @@
 
 using std::cout;
 
+void set_tag_pointer(RawdataRef *rawdata_ref, uint64 new_val) {
+    rawdata_ref->pointer = (uint32)(new_val & 0xFFffFFff);
+    rawdata_ref->id = (uint32)(new_val >> 32);
+}
+void set_tag_pointer(Dependency *dependency, uint64 new_val) {
+    dependency->path_pointer = (uint32)(new_val & 0xFFffFFff);
+    dependency->id = (uint32)(new_val >> 32);
+}
+void set_tag_pointer(Reflexive *reflexive, uint64 new_val) {
+    reflexive->pointer = (uint32)(new_val & 0xFFffFFff);
+    reflexive->id = (uint32)(new_val >> 32);
+}
+
+uint64 get_tag_pointer(RawdataRef *rawdata_ref) {
+    return ((uint64)rawdata_ref->pointer) + (((uint64)rawdata_ref->id) >> 32);
+}
+uint64 get_tag_pointer(Dependency *dependency) {
+    return ((uint64)dependency->path_pointer) + (((uint64)dependency->id) >> 32);
+}
+uint64 get_tag_pointer(Reflexive *reflexive) {
+    return ((uint64)reflexive->pointer) + (((uint64)reflexive->id) >> 32);
+}
+
 char *parse_dependency(Dependency *dependency, char *curr_pos) {
     if (dependency->path_length == 0) {
-        dependency->path_pointer = NULL;
+        set_tag_pointer(dependency, NULL);
     } else {
-        dependency->path_pointer = (pointer32)curr_pos;
+        set_tag_pointer(dependency, (uint64)curr_pos);
         // convert backslashes into forward slashes for linux
         sanitize_path(curr_pos, true);
         curr_pos += dependency->path_length + 1;
@@ -36,10 +59,11 @@ char *parse_dependency(Dependency *dependency, char *curr_pos) {
 }
 
 char *parse_reflexive(Reflexive *reflexive, char *curr_pos, size_t struct_size) {
+    // store the upper 4 bytes of the pointer(if on 64 bit) in the id since it's unused
     if (reflexive->size == 0) {
-        reflexive->pointer = NULL;
+        set_tag_pointer(reflexive, NULL);
     } else {
-        reflexive->pointer = (pointer32)curr_pos;
+        set_tag_pointer(reflexive, (uint64)curr_pos);
         curr_pos += reflexive->size * struct_size;
     }
     return curr_pos;
@@ -47,9 +71,9 @@ char *parse_reflexive(Reflexive *reflexive, char *curr_pos, size_t struct_size) 
 
 char *parse_rawdata_ref(RawdataRef *rawdata_ref, char *curr_pos) {
     if (rawdata_ref->size == 0) {
-        rawdata_ref->pointer = NULL;
+        set_tag_pointer(rawdata_ref, NULL);
     } else {
-        rawdata_ref->pointer = (pointer32)curr_pos;
+        set_tag_pointer(rawdata_ref, (uint64)curr_pos);
         curr_pos += rawdata_ref->size;
     }
     return curr_pos;
@@ -131,7 +155,7 @@ void print_rawdata_ref(RawdataRef &rawdata_ref, char *name, int indent) {
     cout << indent1 << "size        == " << (rawdata_ref.size) << '\n';
     //cout << indent1 << "flags       == " << (rawdata_ref.flags) << '\n';
     //cout << indent1 << "raw_pointer == " << (rawdata_ref.raw_pointer) << '\n';
-    cout << indent1 << "pointer     == " << (rawdata_ref.pointer) << '\n';
+    cout << indent1 << "pointer     == " << get_tag_pointer(&rawdata_ref) << '\n';
     //cout << indent1 << "id          == " << (rawdata_ref.id) << '\n';
     cout << indent0 << "}\n";
 }
@@ -144,7 +168,7 @@ void print_dependency(Dependency &dependency, char *name, int indent) {
     //cout << indent1 << "path_pointer == " << (dependency.path_pointer) << '\n';
     //cout << indent1 << "id           == " << (dependency.id) << '\n';
     if (dependency.path_length) {
-        cout << indent1 << "path == \"" << ((char *)dependency.path_pointer) << "\"\n";
+        cout << indent1 << "path == \"" << ((char *)get_tag_pointer(&dependency)) << "\"\n";
     } else {
         cout << indent1 << "path == \"\"\n";
     }
@@ -155,7 +179,7 @@ void print_reflexive(Reflexive &reflexive, char *name, int indent) {
     char *indent1 = make_indent_str(indent + 1);
     cout << indent0 << "{ " << name << ", ptr == " << (&reflexive) << '\n';
     cout << indent1 << "size        == " << (reflexive.size) << '\n';
-    cout << indent1 << "pointer     == " << (reflexive.pointer) << '\n';
+    cout << indent1 << "pointer     == " << get_tag_pointer(&reflexive) << '\n';
     //cout << indent1 << "id          == " << (reflexive.id) << '\n';
     cout << indent0 << "}\n";
 }

@@ -20,7 +20,7 @@
 #pragma once
 #include "util/constants.h"
 
-const uint32 CONFIG_HEADER_SIG  = FOURCC('?', 'p', 'm', 'C');
+const uint32 CONFIG_HEADER_SIG  = FOURCC('p', 'm', 'o', 'C');
 const uint32 CONFIG_HEADER_SIZE = 128;
 
 #if defined(_WIN32)
@@ -34,16 +34,18 @@ typedef struct ConfigData {
     uint32 sig;          // should be CONFIG_HEADER_SIG
     uint32 header_size;  // should be sizeof(ConfigData)
     uint32 tags_dir_len; // should be strlen(ConfigData->tags_dir)
-    char  *tags_dir;
+    pad    pad0[4];
     uint32 last_playlist_len; // should be strlen(ConfigData->last_playlist)
-    char  *last_playlist;
+    pad    pad1[4];
 
     float  last_volume;
-
     uint32 playlists_dir_len;
-    char  *playlists_dir;
 
-    pad    slack_space[CONFIG_HEADER_SIZE - 4 * 9];
+    pad    slack_space[CONFIG_HEADER_SIZE - 4 * 8 - sizeof(char *) * 3];
+
+    char  *tags_dir;
+    char  *last_playlist;
+    char  *playlists_dir;
 } ConfigData; DUMB_STATIC_ASSERT(sizeof(ConfigData) == CONFIG_HEADER_SIZE);
 
 class ComposerConfig {

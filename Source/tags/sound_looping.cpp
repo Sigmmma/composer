@@ -70,7 +70,7 @@ void LsndTag::parse() {
     if (tag_body->tracks.size > 0) {
         curr_pos = parse_reflexive(&tag_body->tracks, curr_pos,
                                    sizeof(Track));
-        track = (Track *)tag_body->tracks.pointer;
+        track = (Track *)get_tag_pointer(&tag_body->tracks);
 
         for (sint32 i = 0; i < tag_body->tracks.size; i++, track++) {
             byteswap_lsnd_track(track);
@@ -85,7 +85,7 @@ void LsndTag::parse() {
     if (tag_body->detail_sounds.size > 0) {
         curr_pos = parse_reflexive(&tag_body->detail_sounds, curr_pos,
                                    sizeof(DetailSound));
-        d_sound = (DetailSound *)tag_body->detail_sounds.pointer;
+        d_sound = (DetailSound *)get_tag_pointer(&tag_body->detail_sounds);
 
         for (sint32 i = 0; i < tag_body->detail_sounds.size; i++, d_sound++) {
             byteswap_lsnd_detail_sound(d_sound);
@@ -139,8 +139,8 @@ bool LsndTag::load_dependencies() {
         this->detail_sound_count, sizeof(LoadedDetailSound));
 
     LsndBody    *lsnd_body = (LsndBody *)this->tag_data;
-    Track       *tracks    = (Track*)lsnd_body->tracks.pointer;
-    //DetailSound *d_sounds  = (DetailSound*)lsnd_body->detail_sounds.pointer;
+    Track       *tracks    = (Track*)get_tag_pointer(&lsnd_body->tracks);
+    //DetailSound *d_sounds  = (DetailSound*)get_tag_pointer(&lsnd_body->detail_sounds);
 
     for (int i = 0; i < this->track_sound_count; i++) {
         if (this->track_sounds == NULL) break;
@@ -153,27 +153,27 @@ bool LsndTag::load_dependencies() {
         if (this->track_sounds[i].start == NULL)
             this->track_sounds[i].start = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)tracks->start.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&tracks->start), ".sound"), 0, 1), this->tags_dir);
 
         if (this->track_sounds[i].loop == NULL)
             this->track_sounds[i].loop = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)tracks->loop.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&tracks->loop), ".sound"), 0, 1), this->tags_dir);
 
         if (this->track_sounds[i].end == NULL)
             this->track_sounds[i].end = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)tracks->end.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&tracks->end), ".sound"), 0, 1), this->tags_dir);
 
         if (this->track_sounds[i].alt_loop == NULL)
             this->track_sounds[i].alt_loop = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)tracks->alt_loop.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&tracks->alt_loop), ".sound"), 0, 1), this->tags_dir);
 
         if (this->track_sounds[i].alt_end == NULL)
             this->track_sounds[i].alt_end = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)tracks->alt_end.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&tracks->alt_end), ".sound"), 0, 1), this->tags_dir);
     }
 
     /*for (int i = 0; i < this->detail_sound_count; i++) {
@@ -186,7 +186,7 @@ bool LsndTag::load_dependencies() {
         if (this->detail_sounds[i].sound == NULL)
             this->detail_sounds[i].sound = (SndTag *)load_tag_at_path(
                 strcpycat(this->tags_dir,
-                    strcpycat((char *)d_sounds->sound.path_pointer, ".sound"), 0, 1), this->tags_dir);
+                    strcpycat((char *)get_tag_pointer(&d_sounds->sound), ".sound"), 0, 1), this->tags_dir);
     }*/
     return false;
 }
@@ -246,7 +246,7 @@ void LsndTag::print() {
     //print_dependency(body->continuous_damage_effect, "continuous_damage_effect", 1);
     //print_reflexive(body->tracks, "tracks", 1);
     if (body->tracks.size > 0) {
-        track = (Track *)body->tracks.pointer;
+        track = (Track *)get_tag_pointer(&body->tracks);
 
         for (sint32 i = 0; i < body->tracks.size; i++, track++) {
             cout << indent1 << "{ #" << i << " track, ptr == " << (&track) << '\n';
@@ -264,7 +264,7 @@ void LsndTag::print() {
 
     //print_reflexive(body->detail_sounds, "detail_sounds", 1);
     if (body->detail_sounds.size > 0) {
-        d_sound = (DetailSound *)body->detail_sounds.pointer;
+        d_sound = (DetailSound *)get_tag_pointer(&body->detail_sounds);
 
         for (sint32 i = 0; i < body->detail_sounds.size; i++, d_sound++) {
             cout << indent1 << "{ #" << i << " detail_sound, ptr == "
@@ -362,11 +362,11 @@ LsndTag *make_lsnd_tag_for_snd_tag(SndTag *snd_tag) {
     tag_header->engine_id = EngineId::halo_1;
 
     tag_data->tracks.size = 1;
-    tag_data->tracks.pointer = (pointer32)track;
+    set_tag_pointer(&tag_data->tracks, (uint64)track);
 
     track->loop.tag_class    = TagClass::snd;
     track->loop.path_length  = path_size - 1;
-    track->loop.path_pointer = (pointer32)snd_path;
+    set_tag_pointer(&track->loop, (uint64)snd_path);
 
     LsndTag *lsnd_tag = new LsndTag();
     if (lsnd_tag == NULL) {
