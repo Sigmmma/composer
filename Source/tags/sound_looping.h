@@ -17,7 +17,7 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 #pragma once
 
 #include "common.h"
@@ -133,4 +133,4 @@ static void byteswap_lsnd_body(LsndBody *lsnd_body);
 
 LsndTag *make_lsnd_tag_for_snd_tag(SndTag *snd_tag);
 
-#pragma pack(pop)
+//#pragma pack(pop)

@@ -191,9 +191,13 @@
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
                        linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Composer"/>
+        <CONFIGURATION name="Debug 64" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" warningsAreErrors="0" optimisation="1"
+                       enableIncrementalLinking="0" isDebug="1" alwaysGenerateDebugSymbols="1"/>
         <CONFIGURATION name="Release 64" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
-                       linkTimeOptimisation="1" warningsAreErrors="1" optimisation="3"
+                       linkTimeOptimisation="1" warningsAreErrors="0" optimisation="3"
                        enableIncrementalLinking="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

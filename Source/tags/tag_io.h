@@ -45,10 +45,6 @@ public:
     bool  set_tags_dir(const char *new_tags_dir);
     char *get_tags_dir();
 
-    bool add_reflexive_entry(Reflexive *reflexive, uint32 entry_size);
-    bool insert_reflexive_entry(Reflexive *reflexive, uint32 entry_size, sint32 index);
-    bool remove_reflexive_entry(Reflexive *reflexive, uint32 entry_size, sint32 index);
-    bool move_reflexive_entry(Reflexive *reflexive, uint32 entry_size, sint32 src, sint32 dest);
 };
 
 HaloTag *load_tag_at_path(const char *path, const char *tags_dir);
