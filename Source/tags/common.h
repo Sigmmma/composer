@@ -17,7 +17,7 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 #pragma once
 #include "../util/constants.h"
 
@@ -112,4 +112,4 @@ void print_rawdata_ref(RawdataRef &rawdata_ref, char *name, int indent);
 void print_dependency(Dependency &dependency, char *name, int indent);
 void print_reflexive(Reflexive &reflexive, char *name, int indent);
 
-#pragma pack(pop)
+//#pragma pack(pop)

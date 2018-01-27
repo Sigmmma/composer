@@ -22,7 +22,7 @@ defining the fourcc's for each tag type and blam engine version, and
 other constants, such as the max size a tag can be before it wont be loaded.
 */
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 #pragma once
 #include <cstdint>
 #include <stdio.h>
@@ -78,4 +78,4 @@ enum class EngineId : uint32 {
     halo_2 = FOURCC('!', 'm', 'l', 'b'),
     FORCE_32BIT = 0xFFFFFFFF,
 };
-#pragma pack(pop)
+//#pragma pack(pop)

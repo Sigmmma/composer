@@ -62,7 +62,7 @@ typedef struct CommandList {
     pad           pad0[4];
 
     sint32        command_count; // signed to prevent sint32 comparison to uint32.
-    pad           pad0[8];
+    pad           pad1[8];
 
     uint32        play_length;   // number of seconds to play this lsnd_tag
                                  // before switching to the next lsnd_tag.

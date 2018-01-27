@@ -20,7 +20,7 @@
 // MUST do this before the pragma pack's
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 #pragma once
 
 #include "common.h"
@@ -299,4 +299,4 @@ protected:
                                 // returned from this->get_next_samples.
 };
 
-#pragma pack(pop)
+//#pragma pack(pop)

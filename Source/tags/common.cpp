@@ -37,13 +37,13 @@ void set_tag_pointer(Reflexive *reflexive, uint64 new_val) {
 }
 
 uint64 get_tag_pointer(RawdataRef *rawdata_ref) {
-    return ((uint64)rawdata_ref->pointer) + (((uint64)rawdata_ref->id) >> 32);
+    return ((uint64)rawdata_ref->pointer) + (((uint64)rawdata_ref->id) << 32);
 }
 uint64 get_tag_pointer(Dependency *dependency) {
-    return ((uint64)dependency->path_pointer) + (((uint64)dependency->id) >> 32);
+    return ((uint64)dependency->path_pointer) + (((uint64)dependency->id) << 32);
 }
 uint64 get_tag_pointer(Reflexive *reflexive) {
-    return ((uint64)reflexive->pointer) + (((uint64)reflexive->id) >> 32);
+    return ((uint64)reflexive->pointer) + (((uint64)reflexive->id) << 32);
 }
 
 char *parse_dependency(Dependency *dependency, char *curr_pos) {
