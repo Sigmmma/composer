@@ -54,6 +54,6 @@ bool  file_exists(const char *name);
 char *dirname(const char *path);
 char *get_working_dir();
 char *copy_dir_string(const char *dir_path);
-char *sanitize_path(char *tagpath, bool in_place);
+char *sanitize_path(char *path, bool in_place);
 SplitStr *splitdir(char *str, char *dir);
 SplitStr *splitext(char *str);

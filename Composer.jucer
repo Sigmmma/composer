@@ -7,6 +7,13 @@
               companyCopyright="">
   <MAINGROUP id="UXK1n1" name="Composer">
     <GROUP id="{BC2EE367-4E89-332E-2341-FE809B5CFF86}" name="Source">
+      <GROUP id="{778913DD-7763-55D7-43EC-1AB91D646F35}" name="rsrc">
+        <FILE id="JfjfFO" name="composer_16.png" compile="0" resource="1" file="Source/rsrc/composer_16.png"/>
+        <FILE id="IL8rSL" name="composer_32.png" compile="0" resource="1" file="Source/rsrc/composer_32.png"/>
+        <FILE id="RQtcaW" name="composer_48.png" compile="0" resource="1" file="Source/rsrc/composer_48.png"/>
+        <FILE id="RXlOo7" name="composer_256.PNG" compile="0" resource="1"
+              file="Source/rsrc/composer_256.PNG"/>
+      </GROUP>
       <FILE id="We8YMl" name="config.cpp" compile="1" resource="0" file="Source/config.cpp"/>
       <FILE id="rXwy0v" name="config.h" compile="0" resource="0" file="Source/config.h"/>
       <GROUP id="{8F4701FF-BA1C-F8D3-F6F3-1EE450C62BBD}" name="player">
@@ -17,16 +24,6 @@
         <FILE id="VeGep4" name="constants.h" compile="0" resource="0" file="Source/util/constants.h"/>
         <FILE id="T06G76" name="util.cpp" compile="1" resource="0" file="Source/util/util.cpp"/>
         <FILE id="rhETnD" name="util.h" compile="0" resource="0" file="Source/util/util.h"/>
-      </GROUP>
-      <GROUP id="{AB6F5CEA-6410-7C1C-ED53-E00EDCC393BB}" name="rsrc">
-        <FILE id="Qy6huH" name="composer_16x16.ico" compile="0" resource="1"
-              file="Source/rsrc/composer_16x16.ico"/>
-        <FILE id="PXTliW" name="composer_16x16.png" compile="0" resource="1"
-              file="Source/rsrc/composer_16x16.png"/>
-        <FILE id="k03pKP" name="composer_128x128.ico" compile="0" resource="1"
-              file="Source/rsrc/composer_128x128.ico"/>
-        <FILE id="t7F1k2" name="composer_128x128.PNG" compile="0" resource="1"
-              file="Source/rsrc/composer_128x128.PNG"/>
       </GROUP>
       <GROUP id="{C68ADA5E-0D87-458D-C631-B24BA84F6DEC}" name="widgets">
         <FILE id="az2yVs" name="commands_help.cpp" compile="1" resource="0"
@@ -89,31 +86,6 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="8.1"
-            smallIcon="PXTliW" bigIcon="t7F1k2" aaxFolder="" rtasFolder=""
-            vst3Folder="">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
-                       isDebug="1" optimisation="1" targetName="Composer" debugInformationFormat="ProgramDatabase"
-                       enablePluginBinaryCopyStep="0"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="Win32"
-                       isDebug="0" optimisation="3" targetName="Composer" debugInformationFormat="ProgramDatabase"
-                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2017>
     <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
                    androidExternalReadNeeded="1" androidExternalWriteNeeded="1"
                    androidScreenOrientation="portrait" androidMinimumSDK="25" buildToolsVersion="25.0.3"
@@ -138,7 +110,7 @@
         <MODULEPATH id="juce_audio_basics" path="/usr/share/juce/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="PXTliW" bigIcon="t7F1k2">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="JfjfFO" bigIcon="RXlOo7">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Composer"
                        linuxArchitecture="-m64"/>
@@ -159,12 +131,12 @@
         <MODULEPATH id="juce_audio_basics" path="/usr/share/juce/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux" externalLibraries="" smallIcon="PXTliW"
-                      bigIcon="t7F1k2">
+    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux" externalLibraries="" smallIcon="JfjfFO"
+                      bigIcon="RXlOo7" enableGNUExtensions="1">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" linuxCodeBlocksArchitecture="-m32" isDebug="1" optimisation="1"
+        <CONFIGURATION name="Debug" linuxCodeBlocksArchitecture="-m64" isDebug="1" optimisation="1"
                        targetName="Composer"/>
-        <CONFIGURATION name="Release" linuxCodeBlocksArchitecture="-m32" isDebug="0"
+        <CONFIGURATION name="Release" linuxCodeBlocksArchitecture="-m64" isDebug="0"
                        optimisation="3" targetName="Composer"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

@@ -73,16 +73,17 @@ public:
         this->playlist_reader_count = 0;
         this->lock_playlist_reading = false;
         this->delete_curr_samples = false;
-        this->curr_samples = NULL;
+        this->curr_samples = nullptr;
         this->working_dir = get_working_dir();
 
         this->resampler = new juce::ResamplingAudioSource(this, false);
 
         // load the config and load the last playlist played
+
         this->config   = new ComposerConfig(strcpycat(this->working_dir, (char *)DEF_CONFIG_NAME));
         this->playlist = new Playlist(config->get_last_playlist());
 
-        if (playlist->command_lists == NULL || !playlist->is_valid()) {
+        if (playlist->command_lists == nullptr || !playlist->is_valid()) {
             // couldnt load the playlist, so make a new one
             delete this->playlist;
             this->playlist = new Playlist();
@@ -101,17 +102,17 @@ public:
 
         this->stopPlayback();
 
-        if (this->playlist != NULL && this->config != NULL) {
+        if (this->playlist != nullptr && this->config != nullptr) {
             this->config->set_last_playlist(this->playlist->get_filepath());
             this->config->data->last_volume = this->getVolume();
 
             this->config->serialize();
 
             delete this->playlist;
-            this->playlist = NULL;
+            this->playlist = nullptr;
 
             delete this->config;
-            this->config = NULL;
+            this->config = nullptr;
         }
 
         PlaylistPanel *playlist_panel = (PlaylistPanel *)(this->controls_panel.tabbedWindows->getTabContentComponent(0));
@@ -135,7 +136,7 @@ public:
 
     void buttonClicked(juce::Button* button) override
     {
-        if (button == NULL || button == nullptr) return;
+        if (button == nullptr) return;
         juce::String name = button->getName();
 
         if      (!name.compareIgnoreCase(juce::String("playlists dir button"))) {
@@ -154,7 +155,7 @@ public:
         }
         else if (!name.compareIgnoreCase(juce::String("tagsdir button"))) {
             // changing the default tags directory
-            if (this->playlist == NULL) return;
+            if (this->playlist == nullptr) return;
 
             juce::FileChooser *chooser = new juce::FileChooser(
                 juce::String("Select the current playlist's tags directory"),
@@ -198,18 +199,18 @@ public:
                 juce::File result = chooser->getResult();
                 Playlist *new_playlist = new Playlist((char *)result.getFullPathName().toRawUTF8());
 
-                if (new_playlist == NULL) {
+                if (new_playlist == nullptr) {
                     // bad playlist. let it get deleted.
                 } else if (new_playlist->is_valid()) {
                     // stop the current playback and replace the playlist
                     this->stopPlayback();
                     delete this->curr_samples;
-                    this->curr_samples = NULL;
+                    this->curr_samples = nullptr;
                     if (this->acquire_playlist_write_lock()) return;
                     delete this->playlist;
                     this->playlist = new_playlist;
                     this->release_playlist_write_lock();
-                    new_playlist = NULL;
+                    new_playlist = nullptr;
 
                     // reload the widgets
                     this->loadPlaylistToWidgets();
@@ -220,7 +221,7 @@ public:
         }
         else {
             // something to do with the playlist
-            if (this->playlist == NULL)       return;
+            if (this->playlist == nullptr)       return;
             if (!this->playlist->is_valid())  return;
 
             int curr_cmdl_sel = this->getSelectedTrackIndex();
@@ -286,7 +287,7 @@ public:
                         HaloTag *tag = load_tag_at_path((char *)results[i].getFullPathName().toRawUTF8(),
                             this->playlist->get_tags_dir());
 
-                        if (tag == NULL) continue;
+                        if (tag == nullptr) continue;
                         if (this->acquire_playlist_write_lock()) continue;
                         if (!tag->is_valid()) {
                             // tag wasn't valid
@@ -377,7 +378,7 @@ public:
                     redraw_only = false;
                 }
 
-                if (cmd != NULL && curr_cmd_sel >= 0) {
+                if (cmd != nullptr && curr_cmd_sel >= 0) {
                     if      (!name.compareIgnoreCase(juce::String("play ordered button"))) {
                         // command "normal" pressed
                         cmd->ordered = button->getToggleState();
@@ -399,10 +400,10 @@ public:
                         SndTag *snd_tag     = playlist->get_snd_tag(LsndSectionType::loop, false);
                         SndTag *snd_tag_alt = playlist->get_snd_tag(LsndSectionType::loop, true);
                         bool new_alt_state = button->getToggleState();
-                        if (snd_tag == NULL && !new_alt_state && snd_tag_alt != NULL) {
+                        if (snd_tag == nullptr && !new_alt_state && snd_tag_alt != nullptr) {
                             button->setToggleState(true, dontSendNotification);
                         }
-                        else if (snd_tag_alt == NULL && new_alt_state && snd_tag != NULL) {
+                        else if (snd_tag_alt == nullptr && new_alt_state && snd_tag != nullptr) {
                             button->setToggleState(false, dontSendNotification);
                         }
                         else {
@@ -452,7 +453,7 @@ public:
     }
 
     void sliderValueChanged(juce::Slider *slider) {
-        if (slider == NULL || slider == nullptr) return;
+        if (slider == nullptr) return;
         juce::String name = slider->getName();
 
         double val = slider->getValue();
@@ -462,7 +463,7 @@ public:
             this->setVolume((float)val/100);
         }
         else {
-            if (this->playlist == NULL)       return;
+            if (this->playlist == nullptr)       return;
             if (!this->playlist->is_valid())  return;
 
             int curr_cmdl_sel = this->getSelectedTrackIndex();
@@ -470,19 +471,19 @@ public:
 
             if (!name.compareIgnoreCase(juce::String("playtime slider"))) {
                 // playtime slider changed
-                if (cmdl == NULL) return;
+                if (cmdl == nullptr) return;
                 if (0.0 <= val && val <= (double)0xFFFFFFFF) cmdl->play_length = (uint32)val;
             }
             else {
                 int curr_cmd_sel = this->getSelectedCommandIndex();
                 Command *cmd = this->playlist->get_command(curr_cmd_sel);
 
-                if (cmd == NULL || curr_cmd_sel < 0) return;
+                if (cmd == nullptr || curr_cmd_sel < 0) return;
 
                 if      (!name.compareIgnoreCase(juce::String("permutation to play slider"))) {
                     // permutation slider changed
                     SndTag *snd_tag = playlist->get_snd_tag(this->playlist->curr_section, cmd->alt);
-                    if (snd_tag == NULL) {
+                    if (snd_tag == nullptr) {
                         slider->setValue((double)cmd->perm_index + 1, dontSendNotification);
                     }
                     else if (1.0 <= val && val <= (double)(snd_tag->max_actual_perm() + 1)) {
@@ -513,7 +514,7 @@ public:
 
         CommandList *cmdl = this->playlist->get_command_list();
         juce::DocumentWindow *main_window = (juce::DocumentWindow *)(this->getParentComponent());
-        if (cmdl == NULL) {
+        if (cmdl == nullptr) {
             main_window->setName(ProjectInfo::projectName);
         } else {
             main_window->setName(ProjectInfo::projectName + juce::String(":  ") + juce::String(cmdl->lsnd_path));
@@ -557,7 +558,7 @@ public:
     }
 
     void setActiveIndexes() {
-        if (this->playlist == NULL) return;
+        if (this->playlist == nullptr) return;
         if (this->acquire_playlist_read_lock()) return;
         this->active_track   = this->playlist->curr_command_list();
         this->active_command = this->playlist->curr_command();
@@ -578,18 +579,18 @@ public:
     void reloadSettingsWidgets() {
         SettingsPanel *settings_panel = (SettingsPanel *)(this->controls_panel.tabbedWindows->getTabContentComponent(2));
 
-        if (this->config->get_playlists_dir() != NULL){
+        if (this->config->get_playlists_dir() != nullptr){
             settings_panel->playlistsDir->setText(juce::String(this->config->get_playlists_dir()));
         }
 
-        if (this->playlist == NULL) return;
+        if (this->playlist == nullptr) return;
         if (this->acquire_playlist_read_lock()) return;
-        if (this->playlist->get_tags_dir() != NULL) {
+        if (this->playlist->get_tags_dir() != nullptr) {
             settings_panel->playlistTagsDir->setText(juce::String(this->playlist->get_tags_dir()));
         } else {
             settings_panel->playlistTagsDir->setText(juce::String(""));
         }
-        if (this->playlist->get_filepath() != NULL) {
+        if (this->playlist->get_filepath() != nullptr) {
             settings_panel->playlistPath->setText(juce::String(this->playlist->get_filepath()));
         } else {
             settings_panel->playlistPath->setText(juce::String(""));
@@ -598,7 +599,7 @@ public:
     }
 
     void reloadPlaybackButtons() {
-        if (this->playlist == NULL) return;
+        if (this->playlist == nullptr) return;
         PlaybackPanel *playback_panel = (PlaybackPanel *)(this->controls_panel.playbackPanel);
         if (this->playlist->is_paused() || this->playlist->is_stopped()) {
             playback_panel->playButton->setButtonText(juce::String("Play"));
@@ -608,7 +609,7 @@ public:
     }
 
     void selectPlaylistTreeIndex(int index, bool force_reselect = false) {
-        bool no_playlist = this->playlist == NULL;
+        bool no_playlist = this->playlist == nullptr;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
         if (no_playlist) return;
 
@@ -634,7 +635,7 @@ public:
     }
 
     void reloadPlaylistTree(bool redraw_only = false) {
-        bool no_playlist = this->playlist == NULL;
+        bool no_playlist = this->playlist == nullptr;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
 
         int curr_cmdl_sel = this->getSelectedTrackIndex();
@@ -645,7 +646,7 @@ public:
         if (no_playlist) return;
 
         CommandList *cmdls = this->playlist->command_lists;
-        if (cmdls == NULL) {
+        if (cmdls == nullptr) {
             root->clearSubItems();
             return;
         }
@@ -658,7 +659,7 @@ public:
 
                 if (!is_valid_command_list(&cmdls[i])) {
                     new_string = juce::String("<INVALID>");
-                } else if (cmdls[i].lsnd_tag == NULL) {
+                } else if (cmdls[i].lsnd_tag == nullptr) {
                     new_string = juce::String("MISSING") + juce::String(cmdls[i].lsnd_path);
                 } else {
                     new_string = juce::String(cmdls[i].lsnd_path);
@@ -670,7 +671,7 @@ public:
             for (int i = 0; i < this->playlist->command_list_count; i++) {
                 if (!is_valid_command_list(&cmdls[i])) {
                     root->addSubItem(new TextTreeItem("<INVALID>"), i);
-                } else if (cmdls[i].lsnd_tag == NULL) {
+                } else if (cmdls[i].lsnd_tag == nullptr) {
                     root->addSubItem(new TextTreeItem(
                         juce::String("MISSING: ") + juce::String(cmdls[i].lsnd_path)), i);
                 } else {
@@ -696,14 +697,14 @@ public:
     void reloadPlaylistButtons() {
         int curr_cmdl_sel = this->getSelectedTrackIndex();
 
-        bool no_playlist = this->playlist == NULL;
+        bool no_playlist = this->playlist == nullptr;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
         PlaylistPanel *playlist_panel = (PlaylistPanel *)(this->controls_panel.tabbedWindows->getTabContentComponent(0));
 
         if (no_playlist) return;
 
         CommandList *cmdl = this->playlist->get_command_list(curr_cmdl_sel);
-        if (cmdl != NULL) playlist_panel->playtimeSlider->setValue((double)cmdl->play_length);
+        if (cmdl != nullptr) playlist_panel->playtimeSlider->setValue((double)cmdl->play_length);
         playlist_panel->loopPlaylistButton->setToggleState(this->playlist->loop,    dontSendNotification);
         playlist_panel->playShuffledButton->setToggleState(this->playlist->shuffle, dontSendNotification);
     }
@@ -726,7 +727,7 @@ public:
     }
 
     void reloadCommandsTree(bool redraw_only = false) {
-        bool no_playlist = this->playlist == NULL;
+        bool no_playlist = this->playlist == nullptr;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
         if (no_playlist) return;
 
@@ -777,7 +778,7 @@ public:
     }
 
     void reloadCommandsButtons() {
-        bool no_playlist = this->playlist == NULL;
+        bool no_playlist = this->playlist == nullptr;
         if (!no_playlist) no_playlist = !this->playlist->is_valid();
 
         if (this->acquire_playlist_read_lock()) return;
@@ -793,7 +794,7 @@ public:
         SndTag *snd_tag = this->playlist->get_snd_tag(LsndSectionType::loop, cmd->alt);
 
         commands_panel->loopCommandCountSlider->setValue((double)(cmd->loop_count + 1));
-        if (snd_tag != NULL) {
+        if (snd_tag != nullptr) {
             commands_panel->permutationToPlaySlider->setRange(1, (double)snd_tag->max_actual_perm() + 1, 1);
         }
         commands_panel->permutationToPlaySlider->setValue((double)(cmd->perm_index + 1));
@@ -809,7 +810,7 @@ public:
 
     //==============================================================================
     void startPlayback() {
-        if (this->playlist == NULL)        return;
+        if (this->playlist == nullptr)        return;
         if (!this->playlist->is_valid())   return;
         if (!this->playlist->is_stopped()) return;
 
@@ -832,7 +833,7 @@ public:
     }
 
     void resumePlayback() {
-        if (this->playlist == NULL)       return;
+        if (this->playlist == nullptr)       return;
         if (!this->playlist->is_valid())  return;
         if (!this->playlist->is_paused()) return;
         if (this->playlist->is_stopped()) return;
@@ -847,7 +848,7 @@ public:
     }
 
     void pausePlayback() {
-        if (this->playlist == NULL)      return;
+        if (this->playlist == nullptr)      return;
         if (!this->playlist->is_valid()) return;
 
         this->playlist->pause();
@@ -856,7 +857,7 @@ public:
     }
 
     void stopPlayback() {
-        if (this->playlist == NULL)      return;
+        if (this->playlist == nullptr)      return;
         if (!this->playlist->is_valid()) return;
 
         if (this->acquire_playlist_read_lock()) return;
@@ -922,13 +923,13 @@ public:
         if (this->delete_curr_samples) {
             // exhausted the current samples
             delete this->curr_samples;
-            this->curr_samples = NULL;
+            this->curr_samples = nullptr;
             this->delete_curr_samples = false;
         }
 
         if (this->acquire_playlist_read_lock()) return;
 
-        if (this->playlist == NULL || this->resampler == nullptr) return;
+        if (this->playlist == nullptr || this->resampler == nullptr) return;
         if (this->playlist->is_paused() || this->playlist->is_stopped()) {
             bufferToFill.clearActiveBufferRegion();
             this->release_playlist_read_lock();
@@ -979,14 +980,14 @@ public:
 
             // loop here until the number of samples being requested have been given
             // loop will break at the bottom if the sample buffer has been filled.
-            if (this->playlist == NULL) break;
+            if (this->playlist == nullptr) break;
 
-            if (this->curr_samples == NULL) {
+            if (this->curr_samples == nullptr) {
                 // need to get the next samples to decode
                 int prev_cmd = this->playlist->curr_command();
                 this->curr_samples = this->playlist->get_next_samples();
-                if (this->curr_samples == NULL) {
-                    // if the samples are still NULL and playback isnt paused/stopped,
+                if (this->curr_samples == nullptr) {
+                    // if the samples are still nullptr and playback isnt paused/stopped,
                     // then we need to increment to the next track in the playlist.
                     end_track = true;
                     break;
@@ -1012,7 +1013,7 @@ public:
 
             // decode the samples and make sure they could actually be decoded
             this->curr_samples->decode_to_pcm_float32(req_samp_ct);
-            if (this->curr_samples->decoded_sample_data == NULL) {
+            if (this->curr_samples->decoded_sample_data == nullptr) {
                 end_track = true;
                 break;
             }
@@ -1035,7 +1036,7 @@ public:
             if (this->curr_samples->decoding_finished()) {
                 // exhausted the current samples
                 delete this->curr_samples;
-                this->curr_samples = NULL;
+                this->curr_samples = nullptr;
             }
 
             // break if we supplied the number of samples required.
@@ -1050,7 +1051,7 @@ public:
             this->delete_curr_samples = true;
             this->playlist->stop();
             this->playlist->inc_command_list();
-            if (this->playlist->get_lsnd_tag() != NULL) this->playlist->play();
+            if (this->playlist->get_lsnd_tag() != nullptr) this->playlist->play();
             MessageManager::callAsync(bind(&MainContentComponent::updateTreeSelections, this));
             MessageManager::callAsync(bind(&MainContentComponent::reloadPlaybackButtons, this));
             MessageManager::callAsync(bind(&MainContentComponent::updatePlayInfo, this));
@@ -1151,7 +1152,7 @@ void commandDoubleClickedCallback(void *object, int index) {
     auto *app = (MainContentComponent *)object;
     app->selectCommandsTreeIndex(index);
     app->reloadCommandsButtons();
-    if (app->playlist == NULL)       return;
+    if (app->playlist == nullptr)       return;
     if (!app->playlist->is_valid())  return;
 
     app->stopPlayback();

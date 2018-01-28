@@ -26,8 +26,8 @@ using std::cout;
 
 ComposerConfig::ComposerConfig() {
     // make sure these are null so erase_config doesnt free random memory
-    this->data = NULL;
-    this->filepath = NULL;
+    this->data = nullptr;
+    this->filepath = nullptr;
     this->new_config();
 }
 
@@ -40,7 +40,7 @@ ComposerConfig::~ComposerConfig() {
 }
 
 void ComposerConfig::erase_config() {
-    if (this->data != NULL) {
+    if (this->data != nullptr) {
         free(this->data->tags_dir);
         free(this->data->last_playlist);
         free(this->data->playlists_dir);
@@ -48,14 +48,14 @@ void ComposerConfig::erase_config() {
 
     free(this->data);
     free(this->filepath);
-    this->data = NULL;
-    this->filepath = NULL;
+    this->data = nullptr;
+    this->filepath = nullptr;
 }
 
 bool ComposerConfig::set_filepath(const char *new_path) {
     size_t new_alloc_len = strlen(new_path);
     char *new_alloc_path = (char *)malloc(new_alloc_len + 1);
-    if (new_alloc_path == NULL) return true;
+    if (new_alloc_path == nullptr) return true;
 
     // should probably do some checking to make sure the new_path
     // is a valid filepath before setting it.
@@ -71,7 +71,7 @@ char *ComposerConfig::get_filepath() { return this->filepath; }
 
 bool ComposerConfig::set_tags_dir(const char *new_tags_dir) {
     char *new_alloc_path = copy_dir_string(new_tags_dir);
-    if (new_alloc_path == NULL) return true;
+    if (new_alloc_path == nullptr) return true;
 
     free(this->data->tags_dir);
     this->data->tags_dir_len = strlen(new_alloc_path);
@@ -80,14 +80,14 @@ bool ComposerConfig::set_tags_dir(const char *new_tags_dir) {
 }
 
 char *ComposerConfig::get_tags_dir() {
-    if (!this->is_valid()) return NULL;
+    if (!this->is_valid()) return nullptr;
     return this->data->tags_dir;
 }
 
 bool ComposerConfig::set_last_playlist(const char *new_last_playlist) {
     size_t new_alloc_len = strlen(new_last_playlist);
     char *new_alloc_path = (char *)malloc(new_alloc_len + 1);
-    if (new_alloc_path == NULL) return true;
+    if (new_alloc_path == nullptr) return true;
 
     // should probably do some checking to make sure the new_path
     // is a valid filepath before setting it.
@@ -100,13 +100,13 @@ bool ComposerConfig::set_last_playlist(const char *new_last_playlist) {
 }
 
 char *ComposerConfig::get_last_playlist() {
-    if (!this->is_valid()) return NULL;
+    if (!this->is_valid()) return nullptr;
     return this->data->last_playlist;
 }
 
 bool ComposerConfig::set_playlists_dir(const char *new_playlists_dir) {
     char *new_alloc_path = copy_dir_string(new_playlists_dir);
-    if (new_alloc_path == NULL) return true;
+    if (new_alloc_path == nullptr) return true;
 
     free(this->data->playlists_dir);
     this->data->playlists_dir_len = strlen(new_alloc_path);
@@ -115,7 +115,7 @@ bool ComposerConfig::set_playlists_dir(const char *new_playlists_dir) {
 }
 
 char *ComposerConfig::get_playlists_dir() {
-    if (!this->is_valid()) return NULL;
+    if (!this->is_valid()) return nullptr;
     return this->data->playlists_dir;
 }
 
@@ -127,7 +127,7 @@ void ComposerConfig::new_config() {
     this->data->last_volume = 1.0;
 
     char *working_dir = get_working_dir();
-    if (working_dir == NULL) return;
+    if (working_dir == nullptr) return;
 
     this->set_filepath(strcpycat(working_dir, (char *)DEF_CONFIG_NAME));
     #if defined(__linux__) || defined(UNIX)
@@ -162,7 +162,7 @@ void ComposerConfig::parse(char *input_path) {
 
     // copy the config file into memory
     ConfigData *new_cfg = (ConfigData *)calloc(CONFIG_HEADER_SIZE, 1);
-    if (new_cfg == NULL) return;
+    if (new_cfg == nullptr) return;
     fread(new_cfg, CONFIG_HEADER_SIZE, 1, cfg_file);
 
     if (new_cfg->tags_dir_len > MAX_CFG_STR_LEN
@@ -177,7 +177,7 @@ void ComposerConfig::parse(char *input_path) {
     new_cfg->tags_dir      = (char *)malloc(new_cfg->tags_dir_len + 1);
     new_cfg->last_playlist = (char *)malloc(new_cfg->last_playlist_len + 1);
     new_cfg->playlists_dir = (char *)malloc(new_cfg->playlists_dir_len + 1);
-    if (new_cfg->tags_dir == NULL || new_cfg->last_playlist == NULL || new_cfg->playlists_dir == NULL) {
+    if (new_cfg->tags_dir == nullptr || new_cfg->last_playlist == nullptr || new_cfg->playlists_dir == nullptr) {
         free(new_cfg->tags_dir);
         free(new_cfg->last_playlist);
         free(new_cfg->playlists_dir);
@@ -193,6 +193,10 @@ void ComposerConfig::parse(char *input_path) {
     new_cfg->tags_dir[new_cfg->tags_dir_len] = 0;
     new_cfg->last_playlist[new_cfg->last_playlist_len] = 0;
     new_cfg->playlists_dir[new_cfg->playlists_dir_len] = 0;
+
+    sanitize_path(new_cfg->tags_dir, true);
+    sanitize_path(new_cfg->last_playlist, true);
+    sanitize_path(new_cfg->playlists_dir, true);
 
     // erase any old config and replace it with the new one
     this->erase_config();
@@ -216,13 +220,13 @@ size_t ComposerConfig::serialize() {
 
     // write the config header
     fwrite(this->data, CONFIG_HEADER_SIZE, 1, cfg_file);
-    if (this->data->tags_dir != NULL) {
+    if (this->data->tags_dir != nullptr) {
         fwrite(this->data->tags_dir, this->data->tags_dir_len + 1, 1, cfg_file);
     }
-    if (this->data->last_playlist != NULL) {
+    if (this->data->last_playlist != nullptr) {
         fwrite(this->data->last_playlist, this->data->last_playlist_len + 1, 1, cfg_file);
     }
-    if (this->data->playlists_dir != NULL) {
+    if (this->data->playlists_dir != nullptr) {
         fwrite(this->data->playlists_dir, this->data->playlists_dir_len + 1, 1, cfg_file);
     }
 
@@ -234,7 +238,7 @@ size_t ComposerConfig::serialize() {
 }
 
 bool ComposerConfig::is_valid() {
-    if (this->data == NULL || this->filepath == NULL) {
+    if (this->data == nullptr || this->filepath == nullptr) {
         return false;
     } else if (this->data->sig != CONFIG_HEADER_SIG) {
         return false;
