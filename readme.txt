@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.1.0
+    Fixed bugs with composer compiling for 64bit.
+
   * v1.0.9
     Applied exponential scale to volume so it applies gain
     in a way more suited to human ears.

@@ -20,7 +20,7 @@
 #pragma once
 #include "util/constants.h"
 
-const uint32 CONFIG_HEADER_SIG  = FOURCC('p', 'm', 'o', 'C');
+const uint32 CONFIG_HEADER_SIG  = FOURCC('?', 'p', 'm', 'C');
 const uint32 CONFIG_HEADER_SIZE = 128;
 
 #if defined(_WIN32)
