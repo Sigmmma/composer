@@ -97,7 +97,7 @@ char *get_working_dir() {
     char *tmp_cwd = cwd;
     size_t len = strlen(cwd);
     if (cwd[len - 1] != '/') {
-        char *cwd = (char *)malloc(len + 2);
+        cwd = (char *)malloc(len + 2);
         memcpy(cwd, tmp_cwd, len);
         cwd[len] = '/';
         cwd[len + 1] = 0;

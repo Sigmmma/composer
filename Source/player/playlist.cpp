@@ -1138,6 +1138,7 @@ void Playlist::parse(char *input_path) {
         return;
     }
     fread(head->tags_dir, head->tags_dir_len + 1, 1, in_file);
+    sanitize_path(head->tags_dir, true);
 
     // read the command_lists into memory
     head->command_lists = (CommandList *)calloc(
@@ -1175,6 +1176,7 @@ void Playlist::parse(char *input_path) {
         }
         fread(cmdl->lsnd_path, cmdl->lsnd_path_len + 1, 1, in_file);
         fread(cmdl->commands, COMMAND_SIZE, cmdl->command_count, in_file);
+        sanitize_path(cmdl->lsnd_path, true);
 
         cmdl->lsnd_tag = NULL;
         if (!cmdl->is_sound) {
