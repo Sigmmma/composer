@@ -284,6 +284,9 @@ Troubleshooting:
 
 Changelog:
 
+  * v1.1.1
+    Fixed bug with adpcm playing at 98.5% speed.
+
   * v1.1.0
     Fixed bugs with composer compiling for 64bit.
 

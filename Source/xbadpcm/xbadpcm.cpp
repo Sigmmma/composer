@@ -109,8 +109,6 @@ int decode_xboxadpcm_stream(uint8_t *in, uint8_t *out, int in_block_count, int c
 
     for(out_block_count = 0; in_block_count--; out_block_count++) {
         for(c = 0; c < channels; c++) {
-            *out++ = in[0];
-            *out++ = in[1];
             f_adpcm_state[c].predictor = in[0] | (in[1] << 8);    in += 2;
             f_adpcm_state[c].index     = in[0] | (in[1] << 8);    in += 2;
             clamp_to_bounds(f_adpcm_state[c].index, 88, 0);

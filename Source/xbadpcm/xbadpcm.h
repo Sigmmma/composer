@@ -37,7 +37,7 @@
 #include <stdint.h>
 
 #define XBOX_ADPCM_BLOCKSIZE 36
-#define XBOX_PCM_BLOCKSIZE   130
+#define XBOX_PCM_BLOCKSIZE   128
 #define MAX_CHANNEL_COUNT    6   // 6 channels is more than we'll ever need
 const uint8_t SAMPLES_PER_XBOX_ADPCM_BLOCK = XBOX_PCM_BLOCKSIZE / sizeof(int16_t);
 
